@@ -37,7 +37,7 @@
               accept="document/pdf"
               required
               label="Book content"
-              prepend-icon=""
+             
             >
             </v-file-input>
             <v-spacer></v-spacer>
@@ -65,9 +65,15 @@
                 @input="menu2 = false"
               ></v-date-picker>
             </v-menu>
-            <v-btn class="primary" @click="submitBook">submit</v-btn>
+            
           </v-form>
+            <v-card-actions>
+          <v-btn class="primary" @click="submitBook">submit</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn class="error">cancel</v-btn>
+        </v-card-actions>
         </v-card>
+      
       </v-flex>
     </v-layout>
   </v-app>
