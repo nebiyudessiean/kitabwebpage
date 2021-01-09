@@ -64,6 +64,7 @@
           <v-btn class="primary" @click="register">
             <span>Submit</span>
           </v-btn>
+          
         </v-layout>
       </v-card-actions>
     </v-card>

@@ -4,10 +4,10 @@
     <v-layout align-center justify-center>
       <v-col>
         <template v-for="publisher in publishers">
-          <v-card class="elevation-5" :key="publisher.name">
-            <v-row class="ma-5">
+          <v-card outlined :key="publisher.name">
+            <v-row class="px-auto">
               <v-spacer></v-spacer>
-              <span class="text-h5">{{ publisher.name }}</span>
+              <span >{{ publisher.name }}</span>
               <v-spacer></v-spacer>
               <span>{{ publisher.address }}</span>
               <v-spacer></v-spacer>

@@ -4,9 +4,9 @@
     <v-layout align-center justify-center>
       <v-col>
         <template v-for="author in authors">
-          <v-card class="elevation-2" :key="author.name">
-            <v-row class="ma-5">
-              <v-spacer></v-spacer>
+          <v-card outlined :key="author.name">
+            <v-row  class="px-auto">
+         <v-spacer></v-spacer>
               <span>{{ author.name }}</span>
               <v-spacer></v-spacer>
               <span>{{ author.email }}</span>

@@ -3,7 +3,7 @@
    
     <v-card class="elevation-12 ma-auto mt-30% pa-5" height="auto" width="50%">
       <v-card-title dark class="purple white--text">Login Form</v-card-title>
-      <v-select v-model="selectedUserType" class="mx-8" :items="userType" label="select user type"></v-select>
+      <v-select :rules="userTypeRules" v-model="selectedUserType" class="mx-8" :items="userType" label="select user type"></v-select>
       <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
@@ -52,6 +52,11 @@ export default {
     
     userType: ["admin", "publisher", "author"],
     selectedUserType: "",
+  
+    userTypeRules: [
+      v => v.length>0 || "Please select user type first",
+     
+    ],
     valid: true,
     username: "",
     nameRules: [
@@ -78,15 +83,21 @@ export default {
         // })
         //   .then(response => response.json())
         //   .then(json => console.log(json));
+ this.$cookie.set("username", this.username, 1);
+      this.$cookie.set("userType", this.selectedUserType, 1);
+      this.$cookie.set("password", PasswordHash.generate(this.password), 1);
+     
+this.$router.push("/" + this.selectedUserType);
 
-        // this.$router.push("/" + this.selectedUserType);
-        console.log(this.password,PasswordHash.generate(this.password));
+ console.log(this.password,PasswordHash.generate(this.password));
+ console.log(PasswordHash.verify(this.password,this.$cookie.get('password')));
+     
+        
+       
 
       }
 
-      // this.$cookie.set("username", this.username, 1);
-      // this.$cookie.set("userType", this.selectedUserType, 1);
-      // this.$cookie.set("password", this.password, 1);
+     
     },
     register() {
       this.$router.push("/register" + this.selectedUserType);
