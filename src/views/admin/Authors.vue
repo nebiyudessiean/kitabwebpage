@@ -26,7 +26,7 @@
           :hide-default-footer="true"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="editAuthor(item.id)">mdi-pencil</v-icon>
+            
             <v-icon small @click="deleteAuthor(item.id)">mdi-delete</v-icon>
           </template>
         </v-data-table>
@@ -50,12 +50,12 @@ export default {
   },
   data() {
     return {
-     
+      name: "",
       authors: [
         {id:'', name: "minalbat bimeta", email: "email@email", phone: "251111111" },
         { id:'',name: "dinknew gosmie", email: "email@email", phone: "25111222222" },
       ],
-      name: "",
+     
       headers: [
         { text: "Name", align: "start", sortable: false, value: "name" },
         { text: "Email", value: "email", sortable: false },
@@ -102,9 +102,7 @@ export default {
         });
     },
 
-    editAuthor(id) {
-      this.$router.push({ name: "author-details", params: { id: id } });
-    },
+    
 
     deleteAuthor(id) {
       AuthorDataService.delete(id)

@@ -75,15 +75,12 @@ export default {
 
       phone: "",
       phonedRules: [
-        (v) => !!v || "Phone number- is required",
-        (v) =>
-          (v &&
-            v.length <= 10 &&
-            /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/g.test(v)) ||
-          "Name must be less than 10 characters",
+        (v) => !!v || "Phone number - is required",
+        (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||"Enter valid phone number please",
+        (v) => (v && v.length <= 13) || "Phone must be less than 14 characters",
       ],
       email: "",
-      emailRules: [
+      emailRules:[
         (v) => !!v || "E-mail is required",
         (v) =>
           /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(

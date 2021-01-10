@@ -2,8 +2,7 @@ import Vue from "vue"
 import Router from "vue-router"
 
 
-import AuthorDetails from "@/views/AuthorDetails"
-import PublisherDetails from "@/views/PublisherDetails"
+
 
 
 import Home from './Home.vue'
@@ -25,7 +24,7 @@ import PublisherHome from '@/views/publisher/PublisherHome'
 import BookForm  from '@/views/publisher/BookForm'
 
 
-import EditAuthor from '@/views/author/EditAuther'
+import EditAuthor from '@/views/author/EditAuthor'
 import AuthorHome from '@/views/author/AuthorHome'
 import RegisterAuthor from '@/views/author/RegisterAuthor'
 
@@ -36,23 +35,7 @@ export default new Router({
     base:process.env.BASE_URL,
     routes:[
 
-        ////////////////////////////////////////////////////////////////////
-
-        //Routes for Modification
-
-        /////////////////////////////////////////////////////////////////////
-
-{
-    path:'/publisherDetails',
-    name:'publisher-details',
-    component:PublisherDetails
-},
-{
-    path:'/authorDetails',
-    name:'author-details',
-    component:AuthorDetails
-},
-        
+       
         // ////////////////////////////////////////////////////////////
         
         // Routes for the Admin page 

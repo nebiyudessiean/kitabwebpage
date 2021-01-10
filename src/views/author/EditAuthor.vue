@@ -1,19 +1,19 @@
 <template>
 <v-app>
-    <v-card
+   <v-card
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
       width="50%"
     >
     <v-card-title class="pink">
-      Edit publisher
+      Edit Author
     </v-card-title>
-  <div v-if="currentPublisher" class="edit-form py-3">
-    <p class="headline">Edit Publisher</p>
+  <div v-if="currentAuthor" class="edit-form py-3">
+    <p class="headline">Edit Author</p>
 
     <v-form ref="form" lazy-validation>
       <v-text-field
-        v-model="currentPublisher.name"
+        v-model="currentAuthor.name"
         :rules="[
         (v) => !!v || 'Name is required',
         (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
@@ -23,7 +23,7 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="currentPublisher.email"
+        v-model="currentAuthor.email"
         :rules="[
         (v) => !!v || 'E-mail is required',
         (v) =>
@@ -35,7 +35,7 @@
         required
       ></v-text-field>
        <v-text-field
-        v-model="currentPublisher.phone"
+        v-model="currentAuthor.phone"
         :rules=" [
         (v) => !!v || 'Phone number - is required',
         (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||'Enter valid phone number please',
@@ -44,24 +44,14 @@
         label="Phone"
         required
       ></v-text-field>
-       <v-text-field
-        v-model="currentPublisher.address"
-        :rules=" [
-        (v) => !!v || 'Address- is required',
-        (v) =>
-          (v && v.length <= 10) || 'Address must be less than 10 characters',
-      ]"
-        label="Address"
-        required
-      ></v-text-field>
 
 
       <v-divider class="my-5"></v-divider>
-      <v-btn color="error" small class="mr-2" @click="deletePublisher">
+      <v-btn color="error" small class="mr-2" @click="deleteAuthor">
         Delete
       </v-btn>
 
-      <v-btn color="success" small @click="updatePublisher">
+      <v-btn color="success" small @click="updateAuthor">
         Update
       </v-btn>
       <v-btn class="error" @click="cancel">cancel</v-btn>
@@ -69,30 +59,32 @@
 
     
   </div>
-  <div v-else>
-      <p>Unable to connect to server</p>
+  <div
+  v-else
+  >
+  <p>Unable to connect to server</p>
   </div>
-    </v-card>
-</v-app>
-  
+   </v-card>
+
+  </v-app>
 </template>
 
 <script>
-import PublisherDataService from "@/services/PublisherDataService";
+import AuthorDataService from "@/services/AuthorDataService";
 
 export default {
-  name: "publisher",
+  name: "author",
   data() {
     return {
-      currentPublisher: null,
+      currentAuthor: null,
      
     };
   },
   methods: {
-    getPublisher(id) {
-      PublisherDataService.get(id)
+    getAuthor(id) {
+      AuthorDataService.get(id)
         .then((response) => {
-          this.currentPublisher = response.data;
+          this.currentAuthor = response.data;
           console.log(response.data);
         })
         .catch((e) => {
@@ -103,33 +95,33 @@ export default {
    
 
     updateAuthor() {
-      PublisherDataService.update(this.currentPublisher.id, this.currentPublisher)
+      AuthorDataService.update(this.currentAuthor.id, this.currentAuthor)
         .then((response) => {
           console.log(response.data);
-          this.message = "The publisher was updated successfully!";
+          this.message = "The author was updated successfully!";
         })
         .catch((e) => {
           console.log(e);
         });
     },
 
-    deletePublisher() {
-      PublisherDataService.delete(this.currentPublisher.id)
+    deleteAuthor() {
+      AuthorDataService.delete(this.currentAuthor.id)
         .then((response) => {
           console.log(response.data);
-          this.$router.push({ name: "Publishers" });
+          this.$router.push({ name: "Authors" });
         })
         .catch((e) => {
           console.log(e);
         });
     },
     cancel(){
-        this.$route.pop();
+
     }
   },
   mounted() {
    
-    this.getPublisher(this.$route.params.id);
+    this.getAuthor(this.$route.params.id);
   },
 };
 </script>

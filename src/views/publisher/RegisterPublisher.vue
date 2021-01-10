@@ -90,7 +90,7 @@ export default {
       phoneRules: [
         (v) => !!v || "Phone number - is required",
         (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||"Enter valid phone number please",
-        (v) => (v && v.length <= 13) || "Phone must be less than 10 characters",
+        (v) => (v && v.length <= 13) || "Phone must be less than 14 characters",
       ],
       email: "",
       emailRules: [

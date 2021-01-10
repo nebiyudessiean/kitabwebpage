@@ -26,7 +26,7 @@
           :hide-default-footer="true"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="editPublisher(item.id)">mdi-pencil</v-icon>
+           
             <v-icon small @click="deletePublisher(item.id)">mdi-delete</v-icon>
           </template>
         </v-data-table>
@@ -103,9 +103,7 @@ export default {
         });
     },
 
-    editPublisher(id) {
-      this.$router.push({ name: "publisher-details", params: { id: id } });
-    },
+   
 
     deletePublisher(id) {
       PublisherDataService.delete(id)
