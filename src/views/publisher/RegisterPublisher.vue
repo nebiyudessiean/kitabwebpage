@@ -41,18 +41,21 @@
           </v-text-field>
            <v-text-field
             prepend-icon="security"
-            type="password"
+            :type="typePassword?password:text"
             v-model="password"
-          
+          :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
             :counter="10"
             label="password"
             required
           ></v-text-field>
            <v-text-field
             prepend-icon="security"
-            type="password"
-            v-model="password"
-          
+            
+            v-model="confirmPassword"
+            :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
             :counter="10"
             label="Confirm password"
             required
@@ -71,41 +74,23 @@
   </v-app>
 </template>
 <script>
+import UserInputRules from "@/views/UserInputRules.js"
 export default {
   data() {
     return {
-      valid: true,
+     
+      value:String,
+      typePassword:true,
       nameOfPublisher: "",
-      nameRules: [
-        (v) => !!v || "Name is required",
-        (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
-      ],
+      nameRules: UserInputRules.nameRules,
       address: "",
-      addressdRules: [
-        (v) => !!v || "Address- is required",
-        (v) =>
-          (v && v.length <= 10) || "Address must be less than 10 characters",
-      ],
+      addressdRules: UserInputRules.addressdRules,
       phone: "",
-      phoneRules: [
-        (v) => !!v || "Phone number - is required",
-        (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||"Enter valid phone number please",
-        (v) => (v && v.length <= 13) || "Phone must be less than 14 characters",
-      ],
+      phoneRules:UserInputRules.phoneRules,
       email: "",
-      emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) =>
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-            v
-          ) || "E-mail must be valid",
-      ],
+      emailRules:UserInputRules.emailRules,
       password:'',
-      passwordRulse:[
-      v => !!v || "Username is required",
-      v => /\d[a-z][A-Z][!@#$%^&*)(+=._-]/.test(v) || "Enter stronger password",
-      v => (v && v.length <= 10) || "UserName must be less than 10 characters"
-    ],
+      passwordRules:UserInputRules.passwordRules,
     };
   },
   methods:{

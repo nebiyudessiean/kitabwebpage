@@ -18,7 +18,9 @@
 
           <v-text-field
             prepend-icon="security"
-            type="password"
+            :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
             v-model="password"
           
             :counter="10"
@@ -42,6 +44,7 @@
 </template>
 <script>
   import PasswordHash from "password-hash";
+ 
   
 export default {
   components:{
@@ -49,6 +52,7 @@ export default {
   },
 
   data: () => ({
+    typePassword:true,
     
     userType: ["admin", "publisher", "author"],
     selectedUserType: "",
@@ -59,10 +63,7 @@ export default {
     ],
     valid: true,
     username: "",
-    nameRules: [
-      v => !!v || "Username is required",
-      v => (v && v.length <= 10) || "UserName must be less than 10 characters"
-    ],
+    
     password: "",
     
   }),

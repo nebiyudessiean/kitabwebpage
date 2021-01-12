@@ -14,36 +14,47 @@
     <v-form ref="form" lazy-validation>
       <v-text-field
         v-model="currentAuthor.name"
-        :rules="[
-        (v) => !!v || 'Name is required',
-        (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
-      ]"
+        :rules="nameRules"
         label="Name"
         required
+        prepend-icon="person"
       ></v-text-field>
 
       <v-text-field
+      prepend-icon="email"
         v-model="currentAuthor.email"
-        :rules="[
-        (v) => !!v || 'E-mail is required',
-        (v) =>
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-            v
-          ) || 'E-mail must be valid',
-      ]"
+        :rules="emailRules"
         label="Email"
         required
       ></v-text-field>
        <v-text-field
+       prepend-icon="call"
         v-model="currentAuthor.phone"
-        :rules=" [
-        (v) => !!v || 'Phone number - is required',
-        (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||'Enter valid phone number please',
-        (v) => (v && v.length <= 13) || 'Phone must be less than 14 characters',
-      ]"
+        :rules="phonedRules"
         label="Phone"
         required
       ></v-text-field>
+       <v-text-field
+       prepend-icon="security"
+       :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
+        v-model="currentAuthor.password"
+        :rules="passwordRules"
+        label="password"
+        required
+      ></v-text-field>
+      <v-text-field
+      prepend-icon="security"
+        :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
+        v-model="currentAuthor.password"
+        :rules="ConfirmPasswordRules"
+        label="Confirm password"
+        required
+      ></v-text-field>
+
 
 
       <v-divider class="my-5"></v-divider>
@@ -71,12 +82,19 @@
 
 <script>
 import AuthorDataService from "@/services/AuthorDataService";
+import UserInputRules from "@/views/UserInputRules";
 
 export default {
   name: "author",
   data() {
     return {
+      typePassword:true,
       currentAuthor: null,
+      nameRules:UserInputRules.nameRules,
+      emailRules:UserInputRules.emailRules,
+      passwordRules:UserInputRules.passwordRules,
+      confirmPasswordRules:UserInputRules.confirmPasswordRules,
+      phonedRules:UserInputRules.phonedRules
      
     };
   },

@@ -14,44 +14,51 @@
     <v-form ref="form" lazy-validation>
       <v-text-field
         v-model="currentPublisher.name"
-        :rules="[
-        (v) => !!v || 'Name is required',
-        (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
-      ]"
+        :rules="nameRules"
+        prepend-icon="business"
         label="Name"
         required
       ></v-text-field>
 
       <v-text-field
         v-model="currentPublisher.email"
-        :rules="[
-        (v) => !!v || 'E-mail is required',
-        (v) =>
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-            v
-          ) || 'E-mail must be valid',
-      ]"
+        :rules="emailRules"
+        prepend-icon="email"
         label="Email"
         required
       ></v-text-field>
        <v-text-field
         v-model="currentPublisher.phone"
-        :rules=" [
-        (v) => !!v || 'Phone number - is required',
-        (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||'Enter valid phone number please',
-        (v) => (v && v.length <= 13) || 'Phone must be less than 14 characters',
-      ]"
+        :rules=" phoneRules"
         label="Phone"
+        prepend-icon="call"
         required
       ></v-text-field>
        <v-text-field
         v-model="currentPublisher.address"
-        :rules=" [
-        (v) => !!v || 'Address- is required',
-        (v) =>
-          (v && v.length <= 10) || 'Address must be less than 10 characters',
-      ]"
+        :rules="addressRules"
         label="Address"
+        prepend-icon="location_on"
+        required
+      ></v-text-field>
+       <v-text-field
+        v-model="currentPublisher.password"
+        :rules="passwordRules"
+        label="Password"
+        :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
+        prepend-icon="security"
+        required
+      ></v-text-field>
+       <v-text-field
+        v-model="currentPublisher.password"
+        :rules="confirmPasswordRules"
+        label="Confirm password"
+        :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
+        prepend-icon="security"
         required
       ></v-text-field>
 
@@ -79,12 +86,20 @@
 
 <script>
 import PublisherDataService from "@/services/PublisherDataService";
+import UserInputRules from "@/views/UserInputRules.js";
 
 export default {
   name: "publisher",
   data() {
     return {
+      typePassword:true,
       currentPublisher: null,
+      nameRules:UserInputRules.nameRules,
+      emailRules:UserInputRules.emailRules,
+      phoneRules:UserInputRules.phoneRules,
+      passwordRules:UserInputRules.passwordRules,
+      confirmPasswordRules:UserInputRules.confirmPasswordRules,
+      addressRules:UserInputRules.addressRules
      
     };
   },

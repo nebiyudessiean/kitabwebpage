@@ -9,7 +9,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             prepend-icon="person"
-            v-model="nameOfPublisher"
+            v-model="nameOfAuthor"
             :counter="10"
             :rules="nameRules"
             label="Name of Author"
@@ -22,6 +22,7 @@
             v-model="phone"
             label="Phone number"
             required
+            :rules="phonedRules"
           >
           </v-text-field>
           <v-text-field
@@ -34,18 +35,23 @@
           </v-text-field>
            <v-text-field
             prepend-icon="security"
-            type="password"
+             :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
             v-model="password"
           
             :counter="10"
             label="password"
             required
+            :rules="passwordRules"
           ></v-text-field>
            <v-text-field
             prepend-icon="security"
-            type="password"
+             :type="typePassword?password:text"
+           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+          @click:append="typePassword=!typePassword"
             v-model="confirmPassword"
-          
+          :rules="confirmPasswordRules"
             :counter="10"
             label="Confirm password"
             required
@@ -55,7 +61,7 @@
       <v-card-actions>
         <v-layout align-center justify-center>
           <v-btn class="primary">
-            <span>Add</span>
+            <span>submit</span>
           </v-btn>
         </v-layout>
       </v-card-actions>
@@ -63,37 +69,23 @@
   </v-app>
 </template>
 <script>
+import UserInputRules from "@/views/UserInputRules.js";
 export default {
   data() {
     return {
+      typePassword:true,
       valid: true,
-      nameOfPublisher: "",
-      nameRules: [
-        (v) => !!v || "Name is required",
-        (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
-      ],
+      nameOfAuthor: "",
+      nameRules: UserInputRules.nameRules,
 
       phone: "",
-      phonedRules: [
-        (v) => !!v || "Phone number - is required",
-        (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||"Enter valid phone number please",
-        (v) => (v && v.length <= 13) || "Phone must be less than 14 characters",
-      ],
+      phonedRules: UserInputRules.phonedRules,
       email: "",
-      emailRules:[
-        (v) => !!v || "E-mail is required",
-        (v) =>
-          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-            v
-          ) || "E-mail must be valid",
-      ],
+      emailRules:UserInputRules.emailRules,
       confirmPassword:'',
+      confirmPasswordRules:UserInputRules.confirmPasswordRules,
        password:'',
-      passwordRulse:[
-      v => !!v || "Username is required",
-      v => /\d[a-z][A-Z][!@#$%^&*)(+=._-]/.test(v) || "Enter stronger password",
-      v => (v && v.length <= 10) || "UserName must be less than 10 characters"
-    ],
+      passwordRules:UserInputRules.passwordRules,
     };
   },
 };
