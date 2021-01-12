@@ -64,7 +64,7 @@
       </v-card-text>
       <v-card-actions>
         <v-layout align-center justify-center>
-          <v-btn class="primary" @click="register">
+          <v-btn class="primary" @click="registerPublisher">
             <span>Submit</span>
           </v-btn>
           
@@ -75,6 +75,8 @@
 </template>
 <script>
 import UserInputRules from "@/views/UserInputRules.js"
+import PasswordHash from "password-hash";
+import PublisherDataService from "@/services/PublisherDataService";
 export default {
   data() {
     return {
@@ -94,10 +96,25 @@ export default {
     };
   },
   methods:{
-    register(){
-    if(this.$refs.form.validate()){
-        this.$router.push("/login");
-    }
+    registerPublisher(){
+      var data={
+        nameOfPublisher:this.nameOfPublisher,
+        phone:this.phone,
+        email:this.email,
+        address:this.address,
+        password:PasswordHash.generate(this.password),
+      };
+      PublisherDataService.create(data)
+        .then((response) => {
+          this.author.id = response.data.id;
+          console.log(response.data);
+         
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    
+
     }
   }
 };

@@ -60,7 +60,7 @@
       </v-card-text>
       <v-card-actions>
         <v-layout align-center justify-center>
-          <v-btn class="primary">
+          <v-btn class="primary" @click="registerAuthor">
             <span>submit</span>
           </v-btn>
         </v-layout>
@@ -70,9 +70,18 @@
 </template>
 <script>
 import UserInputRules from "@/views/UserInputRules.js";
+import PasswordHash from "password-hash";
+import AuthorDataService from "@/services/AuthorDataService";
 export default {
   data() {
     return {
+      author:{
+        nameOfAuthor:'',
+        phone:'',
+        email:'',
+        password:'',
+        id:''
+      },
       typePassword:true,
       valid: true,
       nameOfAuthor: "",
@@ -88,5 +97,27 @@ export default {
       passwordRules:UserInputRules.passwordRules,
     };
   },
+  methods:{
+    registerAuthor(){
+      var data={
+        nameOfAuthor:this.nameOfAuthor,
+        phone:this.phone,
+        email:this.email,
+        password:PasswordHash.generate(this.password),
+      };
+      AuthorDataService.create(data)
+        .then((response) => {
+          this.author.id = response.data.id;
+          console.log(response.data);
+         
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    
+
+    }
+
+  }
 };
 </script>
