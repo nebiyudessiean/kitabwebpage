@@ -9,7 +9,7 @@
     </v-col>
 
     <v-col cols="12" md="4">
-      <v-btn text small @click="searchName">
+      <v-btn  small @click="searchName">
         Search
         
       </v-btn>
@@ -52,8 +52,8 @@ export default {
     return {
       name: "",
       authors: [
-        {id:'', name: "minalbat bimeta", email: "email@email", phone: "251111111" },
-        { id:'',name: "dinknew gosmie", email: "email@email", phone: "25111222222" },
+        { name: "minalbat bimeta", email: "email@email", phone: "251111111" },
+        { name: "dinknew gosmie", email: "email@email", phone: "25111222222" },
       ],
      
       headers: [

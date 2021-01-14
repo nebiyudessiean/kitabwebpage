@@ -1,8 +1,8 @@
 import http from "../http-common";
 
 class AuthorDataService {
-  getAll() {
-    return http.get("/authors");
+  getAll(token) {
+    return http.get("/authors",token);
   }
 
   get(id) {

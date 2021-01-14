@@ -2,7 +2,7 @@ import http from "../http-common";
 
 class PublisherDataService {
   getAll() {
-    return http.get("/publishers");
+    return http.get("/publisher");
   }
 
   get(id) {
@@ -10,7 +10,7 @@ class PublisherDataService {
   }
 
   create(data) {
-    return http.post("/publishers", data);
+    return http.post("/api/register", data);
   }
 
   update(id, data) {

@@ -3,7 +3,7 @@ export default {
         (v) => !!v || "Name is required",
         (v) => (v && v.length <= 10) || "Name must be at most  10 characters",
       ],
-      phonedRules: [
+      phoneRules: [
         (v) => !!v || "Phone number - is required",
         (v)=>/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\\./0-9]*$/g.test(v)||"Enter valid phone number please",
         (v) => (v && v.length <= 13) || "Phone must be less than 14 characters",
@@ -21,7 +21,7 @@ export default {
       passwordRules:[
         v => !!v || "Password  is required",
         v => /\d[a-z][A-Z][!@#$%^&*)(+=._-]/.test(v) || "Enter stronger password",
-        v => (v && v.length <= 10) || "Password must at most 10 characters"
+        v => (v && v.length <= 15) || "Password must at most 10 characters"
       ],
       addressRules: [
         (v) => !!v || 'Address- is required',

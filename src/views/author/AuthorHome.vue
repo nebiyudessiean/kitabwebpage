@@ -20,11 +20,7 @@ AuthorNavbar
   },
 
   created() {
-    // var userType = this.$cookie.get("userType");
-    // var userName = this.$cookie.get("userName");
-    // var password = this.$cookie.get("password");
-    // this.isLogged =
-    //   userName.isEmpty() && userType.isEmpty() && password.isEmpty();
+   
   },
 };
 </script>

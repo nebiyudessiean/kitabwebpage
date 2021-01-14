@@ -6,6 +6,9 @@
       Home
     </v-btn>
     <v-spacer></v-spacer>
+     <v-btn rounded text to="/books">
+      Books
+    </v-btn>
     <v-btn rounded text to="/addbook">
       Add book
     </v-btn>

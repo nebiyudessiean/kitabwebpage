@@ -3,7 +3,8 @@
   <v-card>
     <v-app-bar dark flat app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-btn text rounded to="/admin" class="text-display-4">Home</v-btn>
+      <v-btn text rounded to="/admin" >Home</v-btn>
+      <v-btn text rounded to="/books" >Books</v-btn>
       <v-spacer></v-spacer>
 
       <v-btn rounded text to="/publishers">Publishers</v-btn>
@@ -55,10 +56,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$cookie.delete("userType");
-      this.$cookie.delete("userName");
-      this.$cookie.delete("password");
-      this.$router.push("/login");
+      this.$router.push('/login');
     }
   }
 };

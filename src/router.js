@@ -6,8 +6,8 @@ import Router from "vue-router"
 
 
 import Home from './Home.vue'
-
-
+import Registration  from '@/views/Registration.vue'
+import Books  from '@/views/Books.vue'
 
 import Login from '@/Login'
 import AdminHome from '@/views/admin/AdminHome.vue'
@@ -19,14 +19,16 @@ import Authors from '@/views/admin/Authors'
 
 
 import EditPublisher from '@/views/publisher/EditPublisher'
-import RegisterPublisher from '@/views/publisher/RegisterPublisher'
 import PublisherHome from '@/views/publisher/PublisherHome'
-import BookForm  from '@/views/publisher/BookForm'
+import BookForm  from '@/components/BookForm'
+
+
+
 
 
 import EditAuthor from '@/views/author/EditAuthor'
 import AuthorHome from '@/views/author/AuthorHome'
-import RegisterAuthor from '@/views/author/RegisterAuthor'
+
 
 
 Vue.use(Router)
@@ -34,7 +36,17 @@ export default new Router({
     mode:"history",
     base:process.env.BASE_URL,
     routes:[
-
+         {
+            path:'/registration',
+            name:"Registration",
+            component:Registration
+        },
+         {
+            path:'/books',
+            name:"Books",
+            component:Books
+        },
+       
        
         // ////////////////////////////////////////////////////////////
         
@@ -80,11 +92,7 @@ export default new Router({
 
         // ////////////////////////////////////////////////////////////////
         // ////////////////////////////////////////////////////////////
-        {
-            path:'/registerpublisher',
-            name:"RegisterPublisher",
-            component:RegisterPublisher
-        },
+       
         {
             path:'/editpublisher',
             name:"EditPublisher",
@@ -103,6 +111,7 @@ export default new Router({
             name:"BookForm",
             component:BookForm 
         },
+       
 
           //  ////////////////////////////////////////////////////////////////////////////
          
@@ -113,11 +122,7 @@ export default new Router({
 
         // ////////////////////////////////////////////////////////////////
         // ////////////////////////////////////////////////////////////
-        {
-            path:'/registerauthor',
-            name:"RegisterAuthor",
-            component:RegisterAuthor
-        },
+       
         
         {
             path:'/editauthor',
@@ -132,6 +137,7 @@ export default new Router({
             name:"AuthorHome",
             component:AuthorHome 
         },
+        
         
     ]
 })

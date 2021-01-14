@@ -78,6 +78,7 @@
   </div>
   <div v-else>
       <p>Unable to connect to server</p>
+      <v-btn class="error" @click="cancel">Cancel</v-btn>
   </div>
     </v-card>
 </v-app>
@@ -104,6 +105,7 @@ export default {
     };
   },
   methods: {
+   
     getPublisher(id) {
       PublisherDataService.get(id)
         .then((response) => {
@@ -139,7 +141,7 @@ export default {
         });
     },
     cancel(){
-        this.$route.pop();
+        this.$router.go(-1);
     }
   },
   mounted() {
