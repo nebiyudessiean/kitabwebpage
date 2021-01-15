@@ -4,6 +4,7 @@
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
       width="50%"
+      v-if="isLogged"
     >
     <v-card-title class="pink">
       Edit Author
@@ -76,19 +77,24 @@
   <p>Unable to connect to server</p>
   </div>
    </v-card>
-
+<NotLogged></NotLogged>
   </v-app>
 </template>
 
 <script>
 import AuthorDataService from "@/services/AuthorDataService";
 import UserInputRules from "@/views/UserInputRules";
+import NotLogged from "@/NotLogged.vue"
 
 export default {
+  components:{
+    NotLogged
+  },
   name: "author",
   data() {
     return {
       typePassword:true,
+      isLogged:false,
       currentAuthor: null,
       nameRules:UserInputRules.nameRules,
       emailRules:UserInputRules.emailRules,
@@ -99,8 +105,10 @@ export default {
     };
   },
   methods: {
-    getAuthor(id) {
-      AuthorDataService.get(id)
+    getAuthor() {
+      const storage=window.localStorage
+      var token=storage.getItem('kitabToken');
+      AuthorDataService.getAuthorByToken(token)
         .then((response) => {
           this.currentAuthor = response.data;
           console.log(response.data);
@@ -113,7 +121,9 @@ export default {
    
 
     updateAuthor() {
-      AuthorDataService.update(this.currentAuthor.id, this.currentAuthor)
+      const storage=window.localStorage
+      var token=storage.getItem('kitabToken');
+      AuthorDataService.update(token, this.currentAuthor)
         .then((response) => {
           console.log(response.data);
           this.message = "The author was updated successfully!";
@@ -124,7 +134,9 @@ export default {
     },
 
     deleteAuthor() {
-      AuthorDataService.delete(this.currentAuthor.id)
+      const storage=window.localStorage
+      var token=storage.getItem('kitabToken');
+      AuthorDataService.delete(token ,this.currentAuthor.name)
         .then((response) => {
           console.log(response.data);
           this.$router.push({ name: "Authors" });
@@ -139,8 +151,16 @@ export default {
   },
   mounted() {
    
-    this.getAuthor(this.$route.params.id);
+    this.getAuthor();
   },
+  created(){
+    var storage=window.localStorage;
+    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
+      this.isLogged=true;
+    }
+    
+
+  }
 };
 </script>
 

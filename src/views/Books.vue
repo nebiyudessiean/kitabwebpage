@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <PublisherNavbar v-if="typeOfUser==='publisher'"></PublisherNavbar>
+    <div v-if="isLogged">
+  <PublisherNavbar v-if="typeOfUser==='publisher'"></PublisherNavbar>
  <AuthorNavbar v-else-if="typeOfUser==='author'"></AuthorNavbar>
   <AdminNavbar v-else></AdminNavbar>
     <v-row align="center" class="list px-3 mx-auto">
@@ -34,6 +35,8 @@
         </v-card>
       </v-col>
     </v-row>
+    </div>
+    <NotLogged v-else></NotLogged>
   </v-app>
 </template>
 
@@ -42,17 +45,20 @@ import BookDataService from "@/services/BookDataService";
 import PublisherNavbar from "@/components/PublisherNavbar";
 import AuthorNavbar from "@/components/AuthorNavbar";
 import AdminNavbar from "@/components/AdminNavbar";
+import NotLogged from "@/NotLogged.vue";
 
 export default {
   name: "BookList",
   components: {
     PublisherNavbar,
     AuthorNavbar,
-    AdminNavbar
+    AdminNavbar,
+    NotLogged
   },
   data() {
     return {
       typeOfUser:'',
+      isLogged:false,
       id: "",
       title: "",
       books: [
@@ -138,13 +144,15 @@ export default {
    
   },
   created(){
-    const storage=window.localStorage;
-    if (storage.getItem("kitabUserType")===''||storage.getItem('token')==='') {
-      this.$router.push('/login');
+    var storage=window.localStorage;
+    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
+      this.isLogged=true;
+      this.typeOfUser=storage.getItem('kitabUserType');
     }
-    this.typeOfUser=storage.getItem('kitabUserType');
+    
 
   }
+ 
 };
 </script>
 

@@ -4,10 +4,12 @@ class BookDataService {
   getTopRead(token) {
     return http.get("/topBooks",token);
   }
-  getAll(token){
-    return http.get("books",token);
+   async getAll(token){
+    return await http.get("/books",token);
   }
-
+async getBookByTitle(title){
+  return await http.get('/books',title);
+}
  
   addBook(data,token) {
     return http.post("/books", data,token);
@@ -25,7 +27,7 @@ class BookDataService {
     return http.delete(`/books`);
   }
 
-  findByName(title) {
+  findByTitle(title) {
     return http.get(`/books?title=${title}`);
   }
 }

@@ -25,7 +25,7 @@ export default {
         ],
         datasets: [
           {
-            label: "Data One",
+            label: "AUthors",
             backgroundColor: "#f87979",
             pointBackgroundColor: "white",
             borderWidth: 1,

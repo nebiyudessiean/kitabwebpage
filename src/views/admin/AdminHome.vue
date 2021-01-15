@@ -3,6 +3,7 @@
     <AdminNavbar />
     <v-row align="center" class="list px-3 mx-auto">
       <v-col cols="12" sm="12">
+        <ApexChart></ApexChart>
         <v-card class="mx-auto" tile>
           <v-card-title>Authors</v-card-title>
 
@@ -58,10 +59,13 @@
 import AuthorDataService from "@/services/AuthorDataService.js";
 import PublisherDataService from "@/services/AuthorDataService.js";
 import AdminNavbar from "@/components/AdminNavbar";
+import ApexChart from "@/components/chart/ApexChart.vue";
 export default {
   name: "Report-for-admin",
   components: {
-    AdminNavbar
+    AdminNavbar,
+    ApexChart
+
   },
   data() {
     return {

@@ -27,7 +27,7 @@
         >
           <template v-slot:[`item.actions`]="{ item }">
            
-            <v-icon small @click="deletePublisher(item.id)">mdi-delete</v-icon>
+            <v-icon small @click="deletePublisher(item.name)">mdi-delete</v-icon>
           </template>
         </v-data-table>
 
@@ -52,8 +52,8 @@ export default {
     return {
      
       publishers: [
-        {id:'', name: "Mega", email: "emai1l@email", phone: "251111111",address:"Addis Ababa1" },
-        {id:'', name: "Aster nega", email: "email@email", phone: "25111222222",address:"Addis Ababa" },
+        { name: "Mega", email: "emai1l@email", phone: "251111111",address:"Addis Ababa1" },
+        { name: "Aster nega", email: "email@email", phone: "25111222222",address:"Addis Ababa" },
       ],
       name: "",
       headers: [
@@ -105,8 +105,8 @@ export default {
 
    
 
-    deletePublisher(id) {
-      PublisherDataService.delete(id)
+    deletePublisher(name) {
+      PublisherDataService.delete(name)
         .then(() => {
           this.refreshList();
         })

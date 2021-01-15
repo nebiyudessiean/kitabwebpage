@@ -87,6 +87,7 @@ import AuthorDataService from "@/services/AuthorDataService";
 export default {
   data() {
     return {
+   
       accountType: ["publisher", "author"],
       selectedAccountType: "",
       typePassword: true,
@@ -126,6 +127,10 @@ export default {
     cancel() {
       this.$router.push("/login");
     }
+  },
+   created(){
+   
+
   }
-};
+}
 </script>

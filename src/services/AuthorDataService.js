@@ -4,7 +4,9 @@ class AuthorDataService {
   getAll(token) {
     return http.get("/authors",token);
   }
-
+getAuthorByToken(token){
+  return http.get("/authors",token)
+}
   get(id) {
     return http.get(`/authors/${id}`);
   }
@@ -13,16 +15,16 @@ class AuthorDataService {
     return http.post("/authors", data);
   }
 
-  update(id, data) {
-    return http.put(`/authors/${id}`, data);
+  update(token, author) {
+    return http.put(`/authors/`, author,token);
   }
 
-  delete(id) {
-    return http.delete(`/authors/${id}`);
+  delete(token) {
+    return http.delete(`/authors/${token}`);
   }
 
-  deleteAll() {
-    return http.delete(`/authors`);
+  deleteAll(token) {
+    return http.delete(`/authors`,token);
   }
 
   findByName(name) {

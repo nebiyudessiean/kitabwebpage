@@ -1,6 +1,6 @@
 <template>
 <v-app>
-    <v-card
+    <v-card v-if="isLogged"
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
       width="50%"
@@ -80,7 +80,8 @@
       <p>Unable to connect to server</p>
       <v-btn class="error" @click="cancel">Cancel</v-btn>
   </div>
-    </v-card>
+  </v-card>
+  <NotLogged v-else></NotLogged>
 </v-app>
   
 </template>
@@ -88,12 +89,16 @@
 <script>
 import PublisherDataService from "@/services/PublisherDataService";
 import UserInputRules from "@/views/UserInputRules.js";
-
+import NotLogged from "@/NotLogged.vue";
 export default {
   name: "publisher",
+  components:{
+    NotLogged
+  },
   data() {
     return {
       typePassword:true,
+      isLogged:false,
       currentPublisher: null,
       nameRules:UserInputRules.nameRules,
       emailRules:UserInputRules.emailRules,
@@ -106,8 +111,9 @@ export default {
   },
   methods: {
    
-    getPublisher(id) {
-      PublisherDataService.get(id)
+    getPublisher() {
+       var storage=window.localStorage;
+      PublisherDataService.get(storage.getItem("kitabToken"))
         .then((response) => {
           this.currentPublisher = response.data;
           console.log(response.data);
@@ -131,13 +137,14 @@ export default {
     },
 
     deletePublisher() {
-      PublisherDataService.delete(this.currentPublisher.id)
+      var storage=window.localStorage;
+
+      PublisherDataService.delete(storage.getItem("kitabToken",this.currentPublisher.id))
         .then((response) => {
           console.log(response.data);
-          this.$router.push({ name: "Publishers" });
-        })
-        .catch((e) => {
-          console.log(e);
+           })
+        .catch(() => {
+          console.log('Unable to connect');
         });
     },
     cancel(){
@@ -146,9 +153,15 @@ export default {
   },
   mounted() {
    
-    this.getPublisher(this.$route.params.id);
+    this.getPublisher();
   },
-};
+  created(){
+    var storage=window.localStorage;
+    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
+      this.isLogged=true;
+    }
+}
+}
 </script>
 
 <style>

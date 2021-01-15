@@ -1,17 +1,21 @@
 <template>
-  <div v-if="!isLogged">
-<AuthorNavbar/>
-    <h1>This is the hompage of author</h1>
+  <v-app>
+  <div v-if="isLogged">
+    <AuthorNavbar/>
+    <ApexChart></ApexChart>
   </div>
-  <div v-else>
-    <h1>you have logged out</h1>
-  </div>
+  <NotLogged v-else></NotLogged>
+  </v-app>
 </template>
 <script>
-import AuthorNavbar from "../../components/AuthorNavbar.vue";
+import AuthorNavbar from "@/components/AuthorNavbar.vue";
+import ApexChart from "@/components/chart/ApexChart.vue";
+import NotLogged from "@/NotLogged.vue";
 export default {
   components:{
-AuthorNavbar
+AuthorNavbar,
+NotLogged,
+ApexChart
   },
   data() {
     return {
@@ -19,8 +23,13 @@ AuthorNavbar
     };
   },
 
-  created() {
-   
-  },
+   created(){
+    var storage=window.localStorage;
+    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
+      this.isLogged=true;
+    }
+    
+
+  }
 };
 </script>

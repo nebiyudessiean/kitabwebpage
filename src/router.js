@@ -8,6 +8,7 @@ import Router from "vue-router"
 import Home from './Home.vue'
 import Registration  from '@/views/Registration.vue'
 import Books  from '@/views/Books.vue'
+import BookUpdate from "@/views/BookUpdate"
 
 import Login from '@/Login'
 import AdminHome from '@/views/admin/AdminHome.vue'
@@ -20,7 +21,7 @@ import Authors from '@/views/admin/Authors'
 
 import EditPublisher from '@/views/publisher/EditPublisher'
 import PublisherHome from '@/views/publisher/PublisherHome'
-import BookForm  from '@/components/BookForm'
+import BookForm  from '@/views/BookForm'
 
 
 
@@ -36,6 +37,10 @@ export default new Router({
     mode:"history",
     base:process.env.BASE_URL,
     routes:[
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    ///     Common Routes /////////////////////////////////////////////////////////////////
+    /// //////////////////////////////////////////////////////////////////////////////////////
          {
             path:'/registration',
             name:"Registration",
@@ -45,6 +50,11 @@ export default new Router({
             path:'/books',
             name:"Books",
             component:Books
+        },
+        {
+            path:'/bookUpdate',
+            name:"BookUpdate",
+            component:BookUpdate
         },
        
        

@@ -27,7 +27,7 @@
         >
           <template v-slot:[`item.actions`]="{ item }">
             
-            <v-icon small @click="deleteAuthor(item.id)">mdi-delete</v-icon>
+            <v-icon small @click="deleteAuthor(item.name)">mdi-delete</v-icon>
           </template>
         </v-data-table>
 
@@ -92,7 +92,7 @@ export default {
     },
 
     searchName() {
-      AuthorDataService.findByTitle(this.name)
+      AuthorDataService.findByName(this.name)
         .then((response) => {
           this.authors = response.data.map(this.getDisplayAuthor);
           console.log(response.data);
@@ -104,8 +104,8 @@ export default {
 
     
 
-    deleteAuthor(id) {
-      AuthorDataService.delete(id)
+    deleteAuthor(name) {
+      AuthorDataService.delete(name)
         .then(() => {
           this.refreshList();
         })
@@ -116,7 +116,7 @@ export default {
 
     getDisplayAuthor(author) {
       return {
-        id: author.id,
+        
         name: author.name,
         phone: author.phone,
         email: author.email,
