@@ -40,7 +40,7 @@
        :type="typePassword?password:text"
            :append-icon="typePassword ? 'visibility_off' : 'visibility'"
           @click:append="typePassword=!typePassword"
-        v-model="currentAuthor.password"
+        v-model="password"
         :rules="passwordRules"
         label="password"
         required
@@ -50,20 +50,17 @@
         :type="typePassword?password:text"
            :append-icon="typePassword ? 'visibility_off' : 'visibility'"
           @click:append="typePassword=!typePassword"
-        v-model="currentAuthor.password"
+        v-model="confirmPassword"
         :rules="ConfirmPasswordRules"
         label="Confirm password"
         required
       ></v-text-field>
-
-
-
-      <v-divider class="my-5"></v-divider>
+     <v-divider class="my-5"></v-divider>
       <v-btn color="error" small class="mr-2" @click="deleteAuthor">
         Delete
       </v-btn>
 
-      <v-btn color="success" small @click="updateAuthor">
+      <v-btn color="success" s mall @click="updateAuthor">
         Update
       </v-btn>
       <v-btn class="error" @click="cancel">cancel</v-btn>
@@ -83,7 +80,7 @@
 
 <script>
 import AuthorDataService from "@/services/AuthorDataService";
-import UserInputRules from "@/views/UserInputRules";
+import UserInputRules from "@/UserInputRules";
 import NotLogged from "@/NotLogged.vue"
 
 export default {
@@ -94,6 +91,8 @@ export default {
   data() {
     return {
       typePassword:true,
+      password:'',
+      confirmPassword:'',
       isLogged:false,
       currentAuthor: null,
       nameRules:UserInputRules.nameRules,

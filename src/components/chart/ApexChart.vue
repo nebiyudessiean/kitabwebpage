@@ -9,8 +9,10 @@
 <script>
 export default {
  
-  data: () => ({
-    options: {
+  data(){
+
+    return {
+       options: {
       chart: {
         id: 'vuechart-example'
       },
@@ -35,6 +37,8 @@ export default {
       name: 'series-1',
       data: [55, 62, 89, 66, 98, 72, 101, 75, 94, 120, 117, 139]
     }]
-  })
-}
+    }
+   
+  }
+};
 </script>

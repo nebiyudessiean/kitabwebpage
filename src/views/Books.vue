@@ -3,10 +3,10 @@
     <div v-if="isLogged">
   <PublisherNavbar v-if="typeOfUser==='publisher'"></PublisherNavbar>
  <AuthorNavbar v-else-if="typeOfUser==='author'"></AuthorNavbar>
-  <AdminNavbar v-else></AdminNavbar>
+  <AdminNavbar v-else-if="typeOfUser==='amdin'"></AdminNavbar>
     <v-row align="center" class="list px-3 mx-auto">
       <v-col cols="12" md="8">
-        <v-text-field v-model="title" label="Search by Title"></v-text-field>
+        <v-text-field v-model="title" @mouseenter="searchTitle" label="Search by Title"></v-text-field>
       </v-col>
 
       <v-col cols="12" md="4">

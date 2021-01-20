@@ -2,8 +2,7 @@
   <v-app>
     <v-card class="elevation-12 ma-auto mt-30%" height="auto" width="50%">
       <v-card-title dark class="blue lighten-2 white--text">Register Author</v-card-title>
-
-      <v-card-text>
+       <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-select
             :rules="userTypeRules"
@@ -20,15 +19,16 @@
             label="Name "
             required
           ></v-text-field>
-
+         <p v-if="usedUserInput==='userName'" class="red--text">Username already taken.try another</p>
           <v-text-field
-            type="number"
+           :counter="10"
             prepend-icon="call"
             v-model="phone"
             label="Phone number"
             required
-            :rules="phonedRules"
+            :rules="phoneRules"
           ></v-text-field>
+          <p v-if="usedUserInput==='phone'" class="red--text">Phone number already taken try another</p>
           <v-text-field
             prepend-icon="email"
             v-model="email"
@@ -36,14 +36,16 @@
             label="Email"
             required
           ></v-text-field>
-          <v-text-field
+          <p v-if="usedUserInput==='email'" class="red--text">Email already taken try another</p>
+        <!--   <v-text-field
             v-if="selectedAccountType==='publisher'"
             prepend-icon="location_on"
             v-model="address"
             :rules="nameRules"
             label="address"
+            :count="15"
             required
-          ></v-text-field>
+          ></v-text-field> -->
           <v-text-field
             prepend-icon="security"
             :type="typePassword?'password':'text'"
@@ -64,24 +66,32 @@
             label="Confirm password"
             required
           ></v-text-field>
+           <v-file-input
+               type="file"
+              accept="image/*"
+              required
+              label="Upload image for profile"
+              @change="onImagePicked"
+             :rules='[(v) => !!v || "Image - is required"]'
+             ></v-file-input>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-layout align-center justify-center>
           <v-btn class="primary" @click="register">
-            <span>submit</span>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn class="success" @click="cancel">
-            <span>Have account?</span>
-          </v-btn>
+              <span>submit</span>
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn class="success" @click="cancel">
+              <span>Have account?</span>
+             </v-btn>
         </v-layout>
       </v-card-actions>
     </v-card>
   </v-app>
 </template>
 <script>
-import UserInputRules from "@/views/UserInputRules.js";
+import UserInputRules from "@/UserInputRules";
 
 import AuthorDataService from "@/services/AuthorDataService";
 export default {
@@ -89,6 +99,8 @@ export default {
     return {
    
       accountType: ["publisher", "author"],
+      errorMessage:'',
+      usedUserInput:'',
       selectedAccountType: "",
       typePassword: true,
       valid: true,
@@ -98,31 +110,68 @@ export default {
       password: "",
       confirmPassword: "",
       address: "",
-
+      profile:null,
       nameRules: UserInputRules.nameRules,
       userTypeRules: [v => v.length > 0 || "Please select user type first"],
-      phonedRules: UserInputRules.phonedRules,
+      phoneRules: UserInputRules.phoneRules,
       emailRules: UserInputRules.emailRules,
       confirmPasswordRules: UserInputRules.confirmPasswordRules,
       passwordRules: UserInputRules.passwordRules
     };
   },
   methods: {
+    onImagePicked(f){
+        var file= f;
+        if (file!== undefined) {
+         
+          if (file.name.lastIndexOf('.') <= 0) {
+            return
+          }
+          console.log(file.name);
+          const fr = new FileReader()
+          fr.readAsDataURL(file)
+          fr.addEventListener('load', () => {
+            
+           this.profile=fr.result;
+
+          })
+        }
+    },
     register() {
-      var form = new FormData();
+      if (this.$refs.form.validate()) {
+         var form = new FormData();
       form.append("uname", this.name);
       form.append("pno", this.phone);
       form.append("email", this.email);
       form.append("role", this.selectedAccountType);
       form.append("passwd", this.password);
+      form.append("image",this.profile);
+
 
       AuthorDataService.create(form)
         .then(response => {
-          console.log(response.data);
+          if (response.status==200) {
+            this.$router.push("/login")
+          }
         })
-        .catch(e => {
-          console.log(e);
-        });
+        .catch((error)=>{
+          console.log(error)
+
+          if (error.body.attribute === 'email') {
+            this.usedUserInput='email'
+          }
+          else if(error.attribute === 'phone'){
+            this.usedUserInput='phone'
+          }
+          else {
+            this.usedUserInput='userName'
+          }
+
+        }
+      );
+        
+      }
+     
     },
     cancel() {
       this.$router.push("/login");

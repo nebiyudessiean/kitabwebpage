@@ -21,14 +21,14 @@
     >
     
     <v-list>
-      <v-list-item>
+      <v-list-item to="/updateAdminAccount">
         <v-list-item-avatar>
           <v-img
           src="../assets/logo.png"
           ></v-img>
         </v-list-item-avatar>
       </v-list-item>
-      <v-list-item to="#">
+      <v-list-item to="/updateAdminAccount">
         <span class="white--text">email@email.com</span>
       </v-list-item>
 

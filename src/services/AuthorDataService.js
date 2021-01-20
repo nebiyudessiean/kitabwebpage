@@ -12,7 +12,7 @@ getAuthorByToken(token){
   }
 
   create(data) {
-    return http.post("/authors", data);
+    return http.post("/api/register", data);
   }
 
   update(token, author) {

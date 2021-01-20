@@ -6,10 +6,10 @@
       width="50%"
     >
     <v-card-title class="pink">
-      Edit publisher
+    Edit your profile
     </v-card-title>
   <div v-if="currentPublisher" class="edit-form py-3">
-    <p class="headline">Edit Publisher</p>
+    <p class="headline">Edit your profile</p>
 
     <v-form ref="form" lazy-validation>
       <v-text-field
@@ -42,7 +42,7 @@
         required
       ></v-text-field>
        <v-text-field
-        v-model="currentPublisher.password"
+        v-model="password"
         :rules="passwordRules"
         label="Password"
         :type="typePassword?password:text"
@@ -52,7 +52,7 @@
         required
       ></v-text-field>
        <v-text-field
-        v-model="currentPublisher.password"
+        v-model="confirmPassword"
         :rules="confirmPasswordRules"
         label="Confirm password"
         :type="typePassword?password:text"
@@ -88,7 +88,7 @@
 
 <script>
 import PublisherDataService from "@/services/PublisherDataService";
-import UserInputRules from "@/views/UserInputRules.js";
+import UserInputRules from "@/UserInputRules.js";
 import NotLogged from "@/NotLogged.vue";
 export default {
   name: "publisher",
@@ -98,6 +98,8 @@ export default {
   data() {
     return {
       typePassword:true,
+      password:'',
+      confirmPassword:'',
       isLogged:false,
       currentPublisher: null,
       nameRules:UserInputRules.nameRules,

@@ -9,11 +9,15 @@ import Home from './Home.vue'
 import Registration  from '@/views/Registration.vue'
 import Books  from '@/views/Books.vue'
 import BookUpdate from "@/views/BookUpdate"
-
 import Login from '@/Login'
+import ForgotPassword from  "@/ForgotPassword"
+
+
+
 import AdminHome from '@/views/admin/AdminHome.vue'
 import Publishers from '@/views/admin/Publishers'
 import Authors from '@/views/admin/Authors'
+import UpdateAdminAccount from "@/views/admin/UpdateAdminAccount.vue";
 
 
 
@@ -41,6 +45,11 @@ export default new Router({
     /////////////////////////////////////////////////////////////////////////////////////////
     ///     Common Routes /////////////////////////////////////////////////////////////////
     /// //////////////////////////////////////////////////////////////////////////////////////
+     {
+            path:'/forgotPassword',
+            name:"ForgotPassword",
+            component:ForgotPassword
+        },
          {
             path:'/registration',
             name:"Registration",
@@ -69,6 +78,11 @@ export default new Router({
             path:'/',
             name:"Home",
             component:Home
+        },
+         {
+            path:'/updateAdminAccount',
+            name:"UpdateAdminAccount",
+            component:UpdateAdminAccount
         },
          {
             path:'/admin',

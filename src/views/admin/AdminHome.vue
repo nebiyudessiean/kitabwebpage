@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <div v-if="isLogged">
     <AdminNavbar />
     <v-row align="center" class="list px-3 mx-auto">
       <v-col cols="12" sm="12">
@@ -45,13 +46,11 @@
             disable-pagination
             :hide-default-footer="true"
           ></v-data-table>
-
-          <v-card-actions v-if="books.length > 10">
-            <v-btn small color="error" @click="showMoreBooks">show more</v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+    </div>
+    <NotLogged v-else></NotLogged>
   </v-app>
 </template>
 
@@ -60,15 +59,30 @@ import AuthorDataService from "@/services/AuthorDataService.js";
 import PublisherDataService from "@/services/AuthorDataService.js";
 import AdminNavbar from "@/components/AdminNavbar";
 import ApexChart from "@/components/chart/ApexChart.vue";
+import NotLogged from "@/NotLogged.vue";
 export default {
   name: "Report-for-admin",
   components: {
     AdminNavbar,
-    ApexChart
+    ApexChart,
+    NotLogged
 
   },
   data() {
     return {
+      isLogged:false,
+      options: {
+      chart: {
+        id: 'vuechart-example'
+      },
+      xaxis: {
+        categories: []
+      }
+    },
+    series: [{
+      name: 'series-1',
+      data: []
+    }],
       authors: [
         {
           id: "2",
@@ -137,6 +151,11 @@ export default {
       ]
     };
   },
+   created(){
+      const storage=window.localStorage;
+      if (storage.getItem("kitabToken")!=null&&storage.getItem('kitabUserType')!=null) {
+        this.isLogged=true;
+      }},
   methods: {
     retrieveAuthors() {
       AuthorDataService.getAll()
@@ -181,9 +200,8 @@ export default {
         email: publisher.email
       };
     },
-    showMoreAuthors() {},
-    showMorePublishers() {}
-  }
+   },
+  
   // mounted() {
   //   this.retrieveTutorials();
   // },

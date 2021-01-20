@@ -49,7 +49,6 @@
                type="file"
               accept="image/*"
               required
-             
               label="thumbnail for the book"
               @change="onImagePicked"
              :rules='[(v) => !!v || "Image - is required"]'
@@ -112,8 +111,6 @@ export default {
       authorOfBook: "",
       price: 0,
       showDialog: false,
-     
-
       publicationDate: null,
     };
   },
@@ -163,7 +160,7 @@ export default {
       form.append("bookContent",this.bookContent)
       form.append("imageContent",this.imageContent)
 
-      BookDataService.upload(bookForm);
+      BookDataService.upload(form);
     },
     cancel(){
       this.$router.go(-1)

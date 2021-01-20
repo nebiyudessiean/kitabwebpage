@@ -2,35 +2,56 @@
   <v-app>
     <v-card class="elevation-12 ma-auto mt-30% pa-5" height="auto" width="50%">
       <v-card-title dark class="purple white--text">Login Form</v-card-title>
-    
+        <v-select
+              v-model="selectedUserType"
+                   :items="userTypes"
+                   class="mx-8"
+                   label="Select account type">
+        </v-select>
+        <v-select
+                  v-model="userNamePhoneOrEmail"
+                  :items="userNamePhoneOrEmailChoices"
+                  class="mx-8"
+                  label="Login with">    
+          </v-select>
       <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            prepend-icon="account_circle"
-            v-model="username"
-            :counter="20"
-            label="username"
-            required
-            class="mt-5"
-          ></v-text-field>
-
-          <v-text-field
-            prepend-icon="security"
-            :type="typePassword?'password':'text'"
-            :append-icon="typePassword ? 'visibility_off' : 'visibility'"
-            @click:append="typePassword=!tyvpePassword"
-            v-model="password"
-            :counter="15"
-            label="password"
-            required
-          ></v-text-field>
+        <v-form ref="form" lazy-validation>
+              <v-text-field
+                    :prepend-icon="iconType"
+                    v-model="username"
+                    :counter="20"
+                    :rules='rule'
+                    label="username"
+                    required
+                    class="mt-5">
+               </v-text-field>
+              <v-text-field
+                    prepend-icon="security"
+                    :type="typePassword?'password':'text'"
+                    :append-icon="typePassword ? 'visibility_off' : 'visibility'"
+                    @click:append="typePassword=!typePassword"
+                    v-model="password"
+                    :counter="15"
+                    label="password"
+                    required>
+          </v-text-field>
+          <p v-if="errorMessaage" class="red--text">please enter the correct credentials</p>
         </v-form>
       </v-card-text>
       
       <v-card-actions >
+        <v-col>
+        <v-row>
         <v-btn dark color="primary" @click="login">Login</v-btn>
         <v-spacer></v-spacer>
         <v-btn dark color="green" @click="register">Register</v-btn>
+        </v-row>
+        <v-spacer></v-spacer>
+        <v-layout align-center="true" justify-center>
+         
+          <v-btn dark color="green" @click="forgotPassword">Forgot password?</v-btn>
+        </v-layout>
+        </v-col>
       </v-card-actions>
     </v-card>
   </v-app>
@@ -38,17 +59,29 @@
 <script>
 
 import http from "./http-common";
-
+import UserInputRules from "@/UserInputRules";
 export default {
   components: {},
 
   data() {
     return{
     typePassword: true,
-   
-    valid: true,
+    errorMessaage:false,
+    email:'',
+    phone:'',
+    rule:this.userNameRules,
     username: "",
-     password: ""
+    password: "",
+    selectedUserType:'',
+    userNamePhoneOrEmail:'',
+    iconType:'account_circle',   
+    userNamePhoneOrEmailChoices:['email','phone','userName'],
+    userTypes:['admin','publisher','author'],
+  ///////////////////////////Rules////////////////////////////////////
+    phoneRules:UserInputRules.phoneRules,
+    emailRules:UserInputRules.emailRules,
+    userNameRules:UserInputRules.userNameRules
+   
     }
   },
 
@@ -56,16 +89,28 @@ export default {
     login() {
       if (this.$refs.form.validate()) {
         var formData = new FormData();
-        formData.append("uname", this.username);
+        if (this.userNamePhoneOrEmail==='phone') {
+          formData.append("uname", this.username);
+        }
+        else if(this.userNamePhoneOrEmail==='email'){
+           formData.append("email", this.email);
+        }
+        else{
+           formData.append("phone", this.phone);
+        }
+       
         formData.append("passwd", this.password);
+        formData.append("role",this.selectedUserType)
          http.post("/api/auth",formData).then((response)=>{
               console.log(response.data.token);
               const storage=window.localStorage;
               storage.setItem('kitabToken',response.data.token);
               storage.setItem('kitabUserType',this.selectedUserType);
+              this.errorMessaage=false;
               this.$router.push(this.selectedUserType===response.data.role?'/'+this.selectedUserType:'/login');
-         }).catch(()=>{
-         console.log("Invalid input");
+         }).catch((error)=>{
+         this.errorMessaage=true;
+         console.log(error);
 
          });
           
@@ -74,6 +119,25 @@ export default {
     },
     register() {
       this.$router.push("/registration" );
+    },
+    forgotPassword(){
+      this.$router.push("forgotPassword");
+    }
+  },
+  watch:{
+    userNamePhoneOrEmail:function (value) {
+      if (value==='phone') {
+        this.iconType='call';
+        this.rule=this.phoneRules
+      }
+      else if(value==='userName'){
+        this.iconType='account_circle'
+        this.rule=this.userNameRules
+      }
+      else{
+        this.iconType='email'
+        this.rule=this.emailRules
+      }
     }
   }
 };
