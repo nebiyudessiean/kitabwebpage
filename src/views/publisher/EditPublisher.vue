@@ -1,6 +1,7 @@
 <template>
 <v-app>
-    <v-card v-if="isLogged"
+  <div v-if="isLogged">
+    <v-card
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
       width="50%"
@@ -8,12 +9,12 @@
     <v-card-title class="pink">
     Edit your profile
     </v-card-title>
-  <div v-if="currentPublisher" class="edit-form py-3">
+  <div  v-if="userName" class="edit-form py-3">
     <p class="headline">Edit your profile</p>
 
     <v-form ref="form" lazy-validation>
       <v-text-field
-        v-model="currentPublisher.name"
+        v-model="userName"
         :rules="nameRules"
         prepend-icon="business"
         label="Name"
@@ -21,21 +22,21 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="currentPublisher.email"
+        v-model="email"
         :rules="emailRules"
         prepend-icon="email"
         label="Email"
         required
       ></v-text-field>
        <v-text-field
-        v-model="currentPublisher.phone"
+        v-model="phone"
         :rules=" phoneRules"
         label="Phone"
         prepend-icon="call"
         required
       ></v-text-field>
        <v-text-field
-        v-model="currentPublisher.address"
+        v-model="address"
         :rules="addressRules"
         label="Address"
         prepend-icon="location_on"
@@ -43,65 +44,61 @@
       ></v-text-field>
        <v-text-field
         v-model="password"
-        :rules="passwordRules"
+        
         label="Password"
-        :type="typePassword?password:text"
+        :type="typePassword?'password':'text'"
            :append-icon="typePassword ? 'visibility_off' : 'visibility'"
           @click:append="typePassword=!typePassword"
         prepend-icon="security"
         required
       ></v-text-field>
-       <v-text-field
-        v-model="confirmPassword"
-        :rules="confirmPasswordRules"
-        label="Confirm password"
-        :type="typePassword?password:text"
-           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
-          @click:append="typePassword=!typePassword"
-        prepend-icon="security"
-        required
-      ></v-text-field>
+      
 
 
       <v-divider class="my-5"></v-divider>
-      <v-btn color="error" small class="mr-2" @click="deletePublisher">
+      <v-row>
+        <v-btn color="error" small class="mr-2" @click="deletePublisher">
         Delete
       </v-btn>
-
+<v-spacer></v-spacer>
       <v-btn color="success" small @click="updatePublisher">
         Update
       </v-btn>
-      <v-btn class="error" @click="cancel">cancel</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn class="warning" @click="cancel">cancel</v-btn>
+      </v-row>
     </v-form>
-
-    
   </div>
-  <div v-else>
-      <p>Unable to connect to server</p>
-      <v-btn class="error" @click="cancel">Cancel</v-btn>
+  <div
+  v-else
+  >
+  <p>Unable to connect to server</p>
   </div>
   </v-card>
-  <NotLogged v-else></NotLogged>
+  </div>
 </v-app>
   
 </template>
 
 <script>
-import PublisherDataService from "@/services/PublisherDataService";
+import http from "@/http-common";
 import UserInputRules from "@/UserInputRules.js";
-import NotLogged from "@/NotLogged.vue";
+// import NotLogged from "@/NotLogged.vue";
 export default {
   name: "publisher",
   components:{
-    NotLogged
+    // NotLogged
   },
   data() {
     return {
       typePassword:true,
+      userName:'',
+      email:'',
+      phone:'',
       password:'',
-      confirmPassword:'',
+      address:'',
       isLogged:false,
-      currentPublisher: null,
+      token:'',
       nameRules:UserInputRules.nameRules,
       emailRules:UserInputRules.emailRules,
       phoneRules:UserInputRules.phoneRules,
@@ -113,35 +110,43 @@ export default {
   },
   methods: {
    
-    getPublisher() {
-       var storage=window.localStorage;
-      PublisherDataService.get(storage.getItem("kitabToken"))
-        .then((response) => {
-          this.currentPublisher = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
 
    
 
-    updateAuthor() {
-      PublisherDataService.update(this.currentPublisher.id, this.currentPublisher)
-        .then((response) => {
-          console.log(response.data);
-          this.message = "The publisher was updated successfully!";
+    updatePublisher() {
+      if (this.$refs.form.validate()) {
+         var form = new FormData();
+         const storage=window.localStorage;
+         var token=storage.getItem('kitabToken');
+      form.append("uname", this.name);
+      form.append("pno", this.phone);
+      form.append("email", this.email);
+      form.append("role", 'publisher');
+      form.append("passwd", this.password);
+      form.append("image",this.profile);
+      form.append('token',token);
+
+      http.post("/api/user/update", form)
+        .then(response => {
+          if (response.status==200) {
+            this.$router.push("/login")
+          }
         })
-        .catch((e) => {
-          console.log(e);
-        });
+        .catch((error)=>{
+          console.log(error)
+        }
+      );
+        
+      }
     },
 
     deletePublisher() {
-      var storage=window.localStorage;
+      const storage=window.localStorage
+      var token=storage.getItem('kitabToken');
+      const form=new FormData();
+      form.append('token',token);
 
-      PublisherDataService.delete(storage.getItem("kitabToken",this.currentPublisher.id))
+      http.post(token)
         .then((response) => {
           console.log(response.data);
            })
@@ -154,14 +159,28 @@ export default {
     }
   },
   mounted() {
-   
-    this.getPublisher();
+    // this.getPublisher();
+     
   },
   created(){
-    var storage=window.localStorage;
-    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
-      this.isLogged=true;
+   var storage=window.localStorage;
+    var token=storage.getItem('kitabToken');
+    if (token!=null) {
+    this.isLogged=true;
+    var form=new FormData();
+    form.append('token',token);
+    http.post('/api/user/get',form).then(response=>{
+    this.userName=response.data.user_name;
+    this.email=response.data.email;
+    this.phone=response.data.pno;
+    console.log(response)
+    }).catch(()=>{
+      console.log("unableto connect")
+
+    })
     }
+   
+   
 }
 }
 </script>

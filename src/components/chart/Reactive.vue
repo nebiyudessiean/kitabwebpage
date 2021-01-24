@@ -10,32 +10,7 @@ export default {
   data() {
     return {
       //Chart.js options that control the appearance of the chart
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true
-              },
-              gridLines: {
-                display: true
-              }
-            }
-          ],
-          xAxes: [
-            {
-              gridLines: {
-                display: false
-              }
-            }
-          ]
-        },
-        legend: {
-          display: true
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      }
+     
     };
   },
   mounted() {

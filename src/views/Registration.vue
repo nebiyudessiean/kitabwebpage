@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-card class="elevation-12 ma-auto mt-30%" height="auto" width="50%">
-      <v-card-title dark class="blue lighten-2 white--text">Register Author</v-card-title>
+      <v-card-title dark class="blue lighten-2 white--text">Registration</v-card-title>
        <v-card-text>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-select
@@ -56,17 +56,7 @@
             label="password"
             required
           ></v-text-field>
-          <v-text-field
-            prepend-icon="security"
-            :type="typePassword?'password':'text'"
-            :append-icon="typePassword ? 'visibility_off' : 'visibility'"
-            @click:append="typePassword=!typePassword"
-            v-model="confirmPassword"
-            :counter="10"
-            label="Confirm password"
-            required
-          ></v-text-field>
-           <v-file-input
+            <v-file-input
                type="file"
               accept="image/*"
               required
@@ -74,6 +64,7 @@
               @change="onImagePicked"
              :rules='[(v) => !!v || "Image - is required"]'
              ></v-file-input>
+              <p v-if="invalidImage" class="error">Please select valid image</p>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -92,8 +83,7 @@
 </template>
 <script>
 import UserInputRules from "@/UserInputRules";
-
-import AuthorDataService from "@/services/AuthorDataService";
+import http from "@/http-common";
 export default {
   data() {
     return {
@@ -103,12 +93,13 @@ export default {
       usedUserInput:'',
       selectedAccountType: "",
       typePassword: true,
-      valid: true,
+      valid: false,
+      invalidImage:false,
       name: "",
       email: "",
       phone: "",
       password: "",
-      confirmPassword: "",
+     
       address: "",
       profile:null,
       nameRules: UserInputRules.nameRules,
@@ -122,20 +113,17 @@ export default {
   methods: {
     onImagePicked(f){
         var file= f;
-        if (file!== undefined) {
-         
-          if (file.name.lastIndexOf('.') <= 0) {
-            return
-          }
-          console.log(file.name);
-          const fr = new FileReader()
-          fr.readAsDataURL(file)
-          fr.addEventListener('load', () => {
-            
-           this.profile=fr.result;
-
-          })
+        if (file.name.split('.').length<=1||file.name.split('.')[1]!='png') {
+          this.invalidImage=true;
+          this.valid=false;
         }
+       else{
+       
+        this.profile=file;
+        this.valid=true;
+        this.invalidImage=false;
+
+       }
     },
     register() {
       if (this.$refs.form.validate()) {
@@ -148,7 +136,7 @@ export default {
       form.append("image",this.profile);
 
 
-      AuthorDataService.create(form)
+      http.post("/api/register", form)
         .then(response => {
           if (response.status==200) {
             this.$router.push("/login")

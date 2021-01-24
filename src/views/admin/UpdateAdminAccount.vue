@@ -1,6 +1,7 @@
 <template>
 <v-app>
-    <v-card v-if="isLogged"
+  <div v-if="isLogged">
+    <v-card 
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
       width="50%"
@@ -8,12 +9,12 @@
     <v-card-title class="pink">
       Edit publisher
     </v-card-title>
-  <div v-if="admin" class="edit-form py-3">
+  <div v-if="userName" class="edit-form py-3">
     <p class="headline">Modify your account</p>
 
     <v-form ref="form" lazy-validation>
       <v-text-field
-        v-model="admin.userName"
+        v-model="userName"
         :rules="nameRules"
         prepend-icon="account_circle"
         label="Usernamee"
@@ -43,6 +44,7 @@
       <v-btn class="error" @click="cancel">Cancel</v-btn>
   </div>
   </v-card>
+  </div>
   <NotLogged v-else></NotLogged>
 </v-app>
   
@@ -62,7 +64,7 @@ export default {
       typePassword:true,
       isLogged:false,
       password:'',
-      admin: null,
+      userName: '',
       nameRules:UserInputRules.nameRules,
       passwordRules:UserInputRules.passwordRules,
          
@@ -71,18 +73,7 @@ export default {
   },
   methods: {
    
-    adminInfo() {
-       var storage=window.localStorage;
-      http.get(storage.getItem("kitabToken"))
-        .then((response) => {
-          this.admin = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-
+   
    
 
     updateAdmin() {
@@ -107,9 +98,20 @@ export default {
   },
   created(){
     var storage=window.localStorage;
-    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
-      this.isLogged=true;
+    var token=storage.getItem('kitabToken');
+    if (token!=null) {
+    this.isLogged=true;
+    var form=new FormData();
+    form.append('token',token);
+    http.post('/api/user/get',form).then(response=>{
+    this.userName=response.data.user_name;
+      console.log(response)
+    }).catch(()=>{
+      console.log("unableto connect")
+
+    })
     }
+   
 }
 }
 </script>

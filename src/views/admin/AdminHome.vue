@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <div v-if="isLogged">
+      
     <AdminNavbar />
     <v-row align="center" class="list px-3 mx-auto">
       <v-col cols="12" sm="12">
@@ -71,6 +72,8 @@ export default {
   data() {
     return {
       isLogged:false,
+      totalNumberOfBooks:0,
+      totalNumberOfUsers:0,
       options: {
       chart: {
         id: 'vuechart-example'

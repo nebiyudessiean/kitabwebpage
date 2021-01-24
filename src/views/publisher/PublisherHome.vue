@@ -18,7 +18,7 @@
 import PublisherNavbar from "@/components/PublisherNavbar.vue";
 import Reactive from "@/components/chart/Reactive";
 import NotLogged from "@/NotLogged.vue"
-import BookDataService from "@/services/BookDataService"
+
 
 export default {
   components: {
@@ -29,22 +29,7 @@ export default {
   data() {
     return {
       
-      datacollection: null,
-      isLogged:false,
-
-    };
-  },
-  
-  created(){
-    var storage=window.localStorage;
-    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
-      this.isLogged=true;
-      BookDataService.getAll(storage.getItem("kitabToken")).then(response=>this.datacollection=response).catch(()=>this.fillData())      
-      }
-    },
-  methods: {
-    fillData() {
-      this.datacollection = {
+      datacollection: {
         // Data for the y-axis of the chart
         labels: [
           "Dertogad",
@@ -81,8 +66,47 @@ export default {
             ]
           }
         ]
-      };
+      },
+       options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              },
+              gridLines: {
+                display: true
+              }
+            }
+          ],
+          xAxes: [
+            {
+              gridLines: {
+                display: false
+              }
+            }
+          ]
+        },
+        legend: {
+          display: true
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      },
+      isLogged:false,
+
+    };
+  },
+  
+  created(){
+    var storage=window.localStorage;
+    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
+      this.isLogged=true;
+          
+      }
     },
+  methods: {
+    
    
   },
 

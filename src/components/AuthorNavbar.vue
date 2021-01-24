@@ -57,9 +57,10 @@ export default {
   },
   methods: {
     logout() {
-      this.$cookie.delete("userType");
-      this.$cookie.delete("userName");
-      this.$cookie.delete("password");
+       const storage=window.localStorage;
+      storage.removeItem('kitabUserType');
+      storage.removeItem('kitabToken');
+      this.$router.push('/login');
     },
   },
 };

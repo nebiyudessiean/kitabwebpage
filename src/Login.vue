@@ -2,17 +2,15 @@
   <v-app>
     <v-card class="elevation-12 ma-auto mt-30% pa-5" height="auto" width="50%">
       <v-card-title dark class="purple white--text">Login Form</v-card-title>
-        <v-select
-              v-model="selectedUserType"
-                   :items="userTypes"
-                   class="mx-8"
-                   label="Select account type">
-        </v-select>
+       
         <v-select
                   v-model="userNamePhoneOrEmail"
                   :items="userNamePhoneOrEmailChoices"
                   class="mx-8"
-                  label="Login with">    
+                  label="Login with"
+                 :rules='[(v) => !!v || "Please Select one"]'
+                 >    
+
           </v-select>
       <v-card-text>
         <v-form ref="form" lazy-validation>
@@ -72,12 +70,9 @@ export default {
     rule:this.userNameRules,
     username: "",
     password: "",
-    selectedUserType:'',
     userNamePhoneOrEmail:'',
     iconType:'account_circle',   
     userNamePhoneOrEmailChoices:['email','phone','userName'],
-    userTypes:['admin','publisher','author'],
-  ///////////////////////////Rules////////////////////////////////////
     phoneRules:UserInputRules.phoneRules,
     emailRules:UserInputRules.emailRules,
     userNameRules:UserInputRules.userNameRules
@@ -96,18 +91,19 @@ export default {
            formData.append("email", this.email);
         }
         else{
-           formData.append("phone", this.phone);
+           formData.append("pno", this.phone);
         }
        
         formData.append("passwd", this.password);
-        formData.append("role",this.selectedUserType)
-         http.post("/api/auth",formData).then((response)=>{
+              http.post("/api/auth",formData).then((response)=>{
               console.log(response.data.token);
               const storage=window.localStorage;
               storage.setItem('kitabToken',response.data.token);
-              storage.setItem('kitabUserType',this.selectedUserType);
+              storage.setItem('kitabUserType',response.data.role);
+              console.log(response);
+              
               this.errorMessaage=false;
-              this.$router.push(this.selectedUserType===response.data.role?'/'+this.selectedUserType:'/login');
+              this.$router.push("/"+response.data.role);
          }).catch((error)=>{
          this.errorMessaage=true;
          console.log(error);

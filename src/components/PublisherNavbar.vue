@@ -7,7 +7,7 @@
       <v-btn rounded text to="/books">Books</v-btn>
       <v-btn rounded text to="/addbook">Add book</v-btn>
 
-      <v-btn rounded text @click="logout" class="white--text blue" to="/login">
+      <v-btn rounded text @click="logout" class="white--text blue">
         Logout
         <v-icon>mdi-exit-to-app</v-icon>
       </v-btn>
@@ -42,9 +42,9 @@ export default {
   },
   methods: {
     logout() {
-      this.$cookie.delete("userType");
-      this.$cookie.delete("userName");
-      this.$cookie.delete("password");
+       const storage=window.localStorage;
+      storage.clear();
+      this.$router.push('/login');
     }
   }
 };

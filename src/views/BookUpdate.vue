@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-layout v-if="isLogged" align-center md8 justify-center="" >
+    <div v-if="isLogged">
+    <v-layout  align-center md8 justify-center="" >
       <v-flex lg6>
         <v-card class="pa-6" elevation="12">
           <v-card-title dark class="purple white--text">
@@ -13,51 +14,42 @@
               class="mt-3"
               label="Title of the book"
               required
-              v-model="currentBook.title"
+              v-model="book.title"
               outlined
             >
             </v-text-field>
-            <v-text-field
+            <!-- <v-text-field
             :rules='[(v) => !!v || "Author of book - is required"]'
               prepend-icon="account_box"
               label="Author of  the book"
               required
-              v-model="currentBook.author"
+              v-model="book.author"
               outlined
+            >
+            </v-text-field> -->
+            <v-text-field
+              prepend-icon="title"
+              :rules='[(v) => !!v || "description for the book  - is required"]'
+              v-model="book.description"
+              outlined
+              required
+              label="Description"
             >
             </v-text-field>
             <v-text-field
-              prepend-icon="request_quote"
+              prepend-icon="person"
               :rules='[(v) => !!v || "Price of book  - is required"]'
-              v-model="currentBook.price"
+              v-model="book.price"
               outlined
               required
-              label="price of book"
+              label="Price of Book"
             >
             </v-text-field>
-            <v-file-input
-            type="file"
-              accept="application/pdf"
-              required
-              label="Book content"
-              @change="onFliePicked"
-             :rules='[(v) => !!v || "Book content  - is required"]'
-             v-model="currentBook.content"
-             ></v-file-input>
-             <v-file-input
-               type="file"
-              accept="image/*"
-              required
-             
-              label="thumbnail for the book"
-              @change="onImagePicked"
-             :rules='[(v) => !!v || "Image - is required"]'
-             v-model="currentBook.content"
-             ></v-file-input>
+           
 
            
             <v-spacer></v-spacer>
-            <v-menu
+            <!-- <v-menu
               v-model="showDialog"
               :close-on-content-click="false"
               :nudge-right="40"
@@ -83,7 +75,7 @@
                 @input="showDialog = false"
               
               ></v-date-picker>
-            </v-menu>
+            </v-menu> -->
             
           </v-form>
             <v-card-actions>
@@ -94,12 +86,14 @@
         </v-card>
       </v-flex>
     </v-layout>
+    </div>
     <NotLogged v-else></NotLogged>
   </v-app>
 </template>
 <script >
   import BookDataService from "@/services/BookDataService"
   import NotLogged from "@/NotLogged.vue"
+  import http from "@/http-common.js"
 
   export default{
     components:{
@@ -107,28 +101,24 @@
     },
     data(){
       return {
-        currentBook: null,
-        thumbnail:null,
-      isLogged: false
+        
+       book:{},
+        isLogged: false,
+        thumbnail:'',
       }
     },
     methods:{
       getBookInfo(title){
-       BookDataService.getBookByTitle(title).then(response=>{this.currentBook=response.data.book
-this.thumbnail=response.data.thumbnail;
-
-       }).catch(()=>{
-        this.currentBook.title="Fake title"
-        this.currentBook.price=0
-        this.currentBook.author="Fake author"
-         var today = new Date();
-         var dd = String(today.getDate()).padStart(2, '0');
-         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-         var yyyy = today.getFullYear();
-          today = mm + '/' + dd + '/' + yyyy;
-          this.currentBook.publicationDate=today;
-       })
-
+       var form=new FormData();
+      form.append('title',title)
+      http.post("/api/content/search",form)
+        .then(response => {
+          this.book = response.data.map(book=>book);
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
       },
       onImagePicked(f){
         var file= f;
@@ -161,17 +151,17 @@ this.thumbnail=response.data.thumbnail;
           fr.readAsDataURL(file)
           fr.addEventListener('load', () => {
             
-           this.currentBook.content=fr.result;
+           this.book.content=fr.result;
           })
         } 
     },
      submitForm(){
       var form=new FormData();
-      form.append("title",this.currentBook.title),
-      form.append('author',this.currentBook.author);
-      form.append('publicationDate',this.currentBook.publicationDate)
-      form.append('price',this.currentBook.price)
-      form.append("bookContent",this.currentBook.content)
+      form.append("title",this.book.title),
+      form.append('author',this.book.author);
+      // form.append('publicationDate',this.book.publicationDate)
+      form.append('price',this.book.price)
+      form.append("bookContent",this.book.content)
       form.append("imageContent",this.thumbnail)
 
       BookDataService.upload(form);
@@ -184,10 +174,18 @@ this.thumbnail=response.data.thumbnail;
     created(){
       const storage=window.localStorage;
       if (storage.getItem("kitabToken")!=null&&storage.getItem('kitabUserType')!=null) {
-        this.getBookInfo(this.$params.title);
-        this.isLogged=true;
+        // this.getBookInfo(this.$params.title);
+       // console.log(this.$params.title);
+       console.log(this.$params.book)
+               this.isLogged=true;
+        
       }
       
+    },
+    mounted(){
+        
+      
+
     }
   }
 </script>

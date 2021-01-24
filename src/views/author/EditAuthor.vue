@@ -1,5 +1,6 @@
 <template>
 <v-app>
+  <div v-if="isLogged">
    <v-card
       class="elevation-12 ma-auto  mt-30% pa-5"
       height="autho"
@@ -9,12 +10,12 @@
     <v-card-title class="pink">
       Edit Author
     </v-card-title>
-  <div v-if="currentAuthor" class="edit-form py-3">
+  <div v-if="userName" class="edit-form py-3">
     <p class="headline">Edit Author</p>
 
     <v-form ref="form" lazy-validation>
       <v-text-field
-        v-model="currentAuthor.name"
+        v-model="userName"
         :rules="nameRules"
         label="Name"
         required
@@ -23,14 +24,14 @@
 
       <v-text-field
       prepend-icon="email"
-        v-model="currentAuthor.email"
+        v-model="email"
         :rules="emailRules"
         label="Email"
         required
       ></v-text-field>
        <v-text-field
        prepend-icon="call"
-        v-model="currentAuthor.phone"
+        v-model="phone"
         :rules="phonedRules"
         label="Phone"
         required
@@ -45,16 +46,7 @@
         label="password"
         required
       ></v-text-field>
-      <v-text-field
-      prepend-icon="security"
-        :type="typePassword?password:text"
-           :append-icon="typePassword ? 'visibility_off' : 'visibility'"
-          @click:append="typePassword=!typePassword"
-        v-model="confirmPassword"
-        :rules="ConfirmPasswordRules"
-        label="Confirm password"
-        required
-      ></v-text-field>
+      
      <v-divider class="my-5"></v-divider>
       <v-btn color="error" small class="mr-2" @click="deleteAuthor">
         Delete
@@ -74,14 +66,16 @@
   <p>Unable to connect to server</p>
   </div>
    </v-card>
-<NotLogged></NotLogged>
+   </div>
+<NotLogged v-else></NotLogged>
   </v-app>
 </template>
 
 <script>
-import AuthorDataService from "@/services/AuthorDataService";
+
 import UserInputRules from "@/UserInputRules";
 import NotLogged from "@/NotLogged.vue"
+import http from "@/http-common";
 
 export default {
   components:{
@@ -91,51 +85,53 @@ export default {
   data() {
     return {
       typePassword:true,
+      userName:'',
+      phone:'',
+      email:'',
       password:'',
-      confirmPassword:'',
       isLogged:false,
+      isAuthor:false,
       currentAuthor: null,
       nameRules:UserInputRules.nameRules,
       emailRules:UserInputRules.emailRules,
       passwordRules:UserInputRules.passwordRules,
-      confirmPasswordRules:UserInputRules.confirmPasswordRules,
       phonedRules:UserInputRules.phonedRules
      
     };
   },
   methods: {
-    getAuthor() {
-      const storage=window.localStorage
-      var token=storage.getItem('kitabToken');
-      AuthorDataService.getAuthorByToken(token)
-        .then((response) => {
-          this.currentAuthor = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-
-   
-
+    
     updateAuthor() {
-      const storage=window.localStorage
-      var token=storage.getItem('kitabToken');
-      AuthorDataService.update(token, this.currentAuthor)
-        .then((response) => {
-          console.log(response.data);
-          this.message = "The author was updated successfully!";
+     if (this.$refs.form.validate()) {
+         var form = new FormData();
+         const storage=window.localStorage;
+         var token=storage.getItem('kitabToken');
+      form.append("uname", this.name);
+      form.append("pno", this.phone);
+      form.append("email", this.email);
+      form.append("role", 'author');
+      form.append("passwd", this.password);
+      form.append("image",this.profile);
+      form.append('token',token);
+
+      http.post("/api/user/update", form)
+        .then(response => {
+          if (response.status==200) {
+            this.$router.push("/login")
+          }
         })
-        .catch((e) => {
-          console.log(e);
-        });
+        .catch((error)=>{
+          console.log(error)
+        }
+      );
+        
+      }
     },
 
     deleteAuthor() {
       const storage=window.localStorage
       var token=storage.getItem('kitabToken');
-      AuthorDataService.delete(token ,this.currentAuthor.name)
+      http.delete(token)
         .then((response) => {
           console.log(response.data);
           this.$router.push({ name: "Authors" });
@@ -148,15 +144,25 @@ export default {
 
     }
   },
-  mounted() {
-   
-    this.getAuthor();
-  },
+ 
   created(){
-    var storage=window.localStorage;
-    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
-      this.isLogged=true;
+   var storage=window.localStorage;
+    var token=storage.getItem('kitabToken');
+    if (token!=null) {
+    this.isLogged=true;
+    var form=new FormData();
+    form.append('token',token);
+    http.post('/api/user/get',form).then(response=>{
+    this.userName=response.data.user_name;
+    this.email=response.data.email;
+    this.phone=response.data.pno;
+    console.log(response)
+    }).catch(()=>{
+      console.log("unableto connect")
+
+    })
     }
+   
     
 
   }

@@ -56,6 +56,9 @@ export default {
   },
   methods: {
     logout() {
+      const storage=window.localStorage;
+      storage.removeItem('kitabUserType');
+      storage.removeItem('kitabToken');
       this.$router.push('/login');
     }
   }
