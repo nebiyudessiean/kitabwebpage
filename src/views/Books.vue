@@ -1,123 +1,170 @@
 <template>
   <v-app>
     <div v-if="isLogged">
-  <PublisherNavbar v-if="typeOfUser==='publisher'"></PublisherNavbar>
- <AuthorNavbar v-else-if="typeOfUser==='author'"></AuthorNavbar>
-  <AdminNavbar v-else-if="typeOfUser==='amdin'"></AdminNavbar>
-    <v-row align="center" class="list px-3 mx-auto">
-      <v-col cols="12" md="8">
-        <v-text-field v-model="search"  label="Search by Title"></v-text-field>
-      </v-col>
-
-      <v-col cols="12" md="4">
-        <v-btn small @click="searchTitle">Search</v-btn>
-      </v-col>
-
-      <v-col cols="12" sm="12">
-        <v-card class="mx-auto" tile>
-          <v-card-title>Books</v-card-title>
-
-          <v-data-table
-            :headers="bookheaders"
-            :items="books"
-            v-model="selectedBook"
-            disable-pagination
-            show-select
-            item-key="title"
-           :single-select="singleSelect"
-            :hide-default-footer="true"
-          >
-           <template v-slot:top>
-            <v-layout wrap row >
-              <v-flex
-              xs12 md3          
-              >
-                <v-switch
-                  v-model="singleSelect"
-                  label="Disable multiselect"
-                  class="pa-3"
-                ></v-switch>
-            </v-flex>
-               <v-flex xs12 md3>
-                <v-dialog v-model="bookDialog" max-width="800px">
-    
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">"Book modification"</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-form
-                        enctype="multipart/form-data"
-                        v-model="checkBoookValidity"
-                      >
-                      <p>book update failed</p>
-                         <v-layout row wrap justify-space-around>
-                          <v-text-field
-            :rules='[(v) => !!v || "Title of book - is required"]'
-              prepend-icon="title"
-              class="mt-3"
-              label="Title of the book"
-              required
-              v-model="title"
-              outlined
-            >
-            </v-text-field>
+      <PublisherNavbar v-show="typeOfUser == 'publisher'"></PublisherNavbar>
+      <AuthorNavbar v-show="typeOfUser == 'author'"></AuthorNavbar>
+      <AdminNavbar v-show="typeOfUser == 'amdin'"></AdminNavbar>
+      <v-card app class="mt-5">
+        <v-col cols="12" sm="12">
+          <v-row class="mx-5">
             <v-text-field
-              prepend-icon="title"
-              :rules='[(v) => !!v || "description for the book  - is required"]'
-              v-model="description"
-              outlined
-              required
-              label="Description"
+              v-model="search"
+              label="Search by Title"
+            ></v-text-field>
+            <v-btn text class="green--text btn-lg " @click="searchTitle">
+              <v-icon>search</v-icon>
+            </v-btn>
+          </v-row>
+          <v-row>
+            <v-spacer> </v-spacer>
+            <v-btn
+              text
+              class="font-weight-bold"
+              @click="retrieveBooks('topDownload')"
+              >Top downloaded books</v-btn
             >
-            </v-text-field>
-            <v-text-field
-              prepend-icon="person"
-              :rules='[(v) => !!v || "Price of book  - is required"]'
-              v-model="price"
-              outlined
-              required
-              label="Price of Book"
+            <v-spacer> </v-spacer>
+            <v-btn
+              text
+              class="font-weight-bold"
+              @click="retrieveBooks('topRated')"
+              >Top Rated books</v-btn
             >
-            </v-text-field>         
-            <v-spacer></v-spacer>        
-                        </v-layout>
-                      </v-form>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn class="primary" @click="updateBook">
-                        Update book
-                      </v-btn>
+          </v-row>
 
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+          <v-card class="mx-auto" tile>
+            <v-card-title>Books</v-card-title>
 
-              </v-flex>
-            </v-layout>
-             
-            </template>
+            <v-data-table
+              :headers="bookheaders"
+              :items="books"
+              v-model="selectedBook"
+              disable-pagination
+              show-select
+              item-key="title"
+              :single-select="singleSelect"
+              :hide-default-footer="true"
+            >
+              <template v-slot:top>
+                <v-layout wrap row>
+                  <v-flex xs12 md3>
+                    <v-switch
+                      v-model="singleSelect"
+                      label="Disable multiselect"
+                      class="pa-3"
+                    ></v-switch>
+                  </v-flex>
+                  <v-flex xs12 md3>
+                    <v-dialog v-model="bookDialog" max-width="800px">
+                      <v-card>
+                        <v-card-title class="purple">
+                          <span class="headline">Book modification</span>
+                        </v-card-title>
+                        <v-card-text class="pt-5">
+                          <v-form
+                            enctype="multipart/form-data"
+                            v-model="checkBoookValidity"
+                          >
+                            <p>book update failed</p>
+                            <v-layout row wrap justify-space-around>
+                              <v-text-field
+                                :rules="[
+                                  (v) => !!v || 'Title of book - is required',
+                                ]"
+                                prepend-icon="title"
+                                class="mt-3"
+                                label="Title of the book"
+                                required
+                                v-model="title"
+                                outlined
+                              >
+                              </v-text-field>
+                              <v-text-field
+                                prepend-icon="title"
+                                :rules="[
+                                  (v) =>
+                                    !!v ||
+                                    'description for the book  - is required',
+                                ]"
+                                v-model="description"
+                                outlined
+                                required
+                                label="Description"
+                              >
+                              </v-text-field>
+                              <v-text-field
+                                prepend-icon="person"
+                                :rules="[
+                                  (v) => !!v || 'Price of book  - is required',
+                                ]"
+                                v-model="price"
+                                outlined
+                                required
+                                label="Price of Book"
+                              >
+                              </v-text-field>
+                              <v-spacer></v-spacer>
+                            </v-layout>
+                          </v-form>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-btn class="primary" @click="updateBook">
+                            Update book
+                          </v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            class="warning"
+                            @click="bookDialog = !bookDialog"
+                          >
+                            Cancel
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                    <v-snackbar v-model="snackbar" :timeout="timeout">
+                      {{ text }}
 
-            <template v-slot:[`item.actions`]="{ item }">
-              <div v-if="books.indexOf(selectedBook[0])==books.indexOf(item) && singleSelect">
-              <v-icon small class="mr-2" @click="editBook(item)">mdi-pencil</v-icon>
-              <v-icon small @click="deleteBook(item.selectedBook)">mdi-delete</v-icon>
-              </div>
-            </template>
+                      <template v-slot:action="{ attrs }">
+                        <v-btn
+                          class="green"
+                          text
+                          v-bind="attrs"
+                          @click="snackbar = false"
+                        >
+                          Close
+                        </v-btn>
+                      </template>
+                    </v-snackbar>
+                  </v-flex>
+                </v-layout>
+              </template>
 
-          </v-data-table>
-
-          
-        </v-card>
-      </v-col>
-    </v-row>
+              <template v-slot:[`item.actions`]="{ item }">
+                <div
+                  v-if="
+                    books.indexOf(selectedBook[0]) == books.indexOf(item) &&
+                      singleSelect
+                  "
+                >
+                  <v-icon small class="mr-2" @click="editBook(item.ID)"
+                    >mdi-pencil</v-icon
+                  >
+                  <v-icon small @click="deleteBook(item.selectedBook)"
+                    >mdi-delete</v-icon
+                  >
+                </div>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-col>
+      </v-card>
     </div>
     <NotLogged v-else></NotLogged>
   </v-app>
 </template>
 
 <script>
-import http from "@/http-common.js"
+import http from "@/http-common.js";
 import PublisherNavbar from "@/components/PublisherNavbar";
 import AuthorNavbar from "@/components/AuthorNavbar";
 import AdminNavbar from "@/components/AdminNavbar";
@@ -129,26 +176,48 @@ export default {
     PublisherNavbar,
     AuthorNavbar,
     AdminNavbar,
-    NotLogged
+    NotLogged,
   },
   data() {
     return {
-      typeOfUser:'',
-      checkBoookValidity:false,
+      typeOfUser: "",
+      typeOfBooks: "all",
+      checkBoookValidity: false,
 
-      bookDialog:false,
-      isLogged:false,
-      selectedBook:[],
-      singleSelect:true,
-      title:'',
-      description:'',
-      price:0,
+      snackbar: false,
+      timeout: 2000,
+      text: "",
+      bookDialog: false,
+      isLogged: false,
+      selectedBook: [],
+      singleSelect: true,
+      title: "",
+      description: "",
+      price: 0,
       id: "",
       search: "",
 
       books: [
-        {  title: "The title", author: "Auther 1", price: 20, sold: 30,rate:0,avgRate:0,description:'desc1',id:1 },
-        {  title: "The title1", author: "Auther 2", price: 40, sold: 50 ,rate:0,avgRate:0,description:'desc2',id:2}
+        {
+          title: "The title",
+          author: "Auther 1",
+          price: 20,
+          sold: 30,
+          rate: 0,
+          avgRate: 0,
+          description: "desc1",
+          ID: 1,
+        },
+        {
+          title: "The title1",
+          author: "Auther 2",
+          price: 40,
+          sold: 50,
+          rate: 0,
+          avgRate: 0,
+          description: "desc2",
+          ID: 2,
+        },
       ],
 
       bookheaders: [
@@ -159,75 +228,103 @@ export default {
         { text: "Rating", value: "rate", sortable: false },
         { text: "Average Rating", value: "avgRate", sortable: false },
         { text: "Description", value: "description", sortable: false },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   },
- 
+
   methods: {
-    updateBook(){
-       var form=new FormData();
-      form.append("title",this.title),
-      form.append('description',this.description);
-      form.append('price',this.price)
-      http.post('/api/content/update',form).then(response=>{
-        console.log(response);
-      }).catch(()=>{
-
-      })
-
-    },
-    retrieveBooks() {
-      const storage=window.localStorage;
-      var token=storage.getItem('kitabToken');
-      var form=new FormData();
-      form.append('token',token)
-      http.post('/api/content/byme',form)
-        .then(response => {
-          
-         this.books = response.data.map(book=>this.getDisplayBook(book));
-         
-         // response.data.map(e=>console.log(JSON.parse(e).title))
+    updateBook() {
+      console.log(this.id);
+      var form = new FormData();
+      const storage = window.localStorage;
+      var token = storage.getItem("kitabToken");
+      form.append("title", this.title),
+        form.append("description", this.description);
+      form.append("price", this.price);
+      form.append("id", this.id);
+      form.append("token", token);
+      http
+        .post("/api/content/update", form)
+        .then(() => {
+          this.bookDialog = false;
+          this.text = "Succesfully updated";
+          this.snackbar = true;
+          this.retrieveBooks();
         })
-        .catch(e => {
-          console.log(e);
+        .catch(() => {
+          this.text = "Book update failed";
+
+          this.snackbar = true;
         });
     },
-
-    refreshList() {
-      this.retrieveBooks();
+    retrieveBooks(bookType) {
+      const storage = window.localStorage;
+      var token = storage.getItem("kitabToken");
+      var form = new FormData();
+      form.append("token", token);
+      if (bookType === "all") {
+        http
+          .post("/api/content/byme", form)
+          .then((response) => {
+            this.books = response.data.map((book) => this.getDisplayBook(book));
+            console.log(response.data);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      } else if (bookType === "topRated") {
+        http
+          .post("/api/content/bymetoprated", form)
+          .then((response) => {
+            this.books = response.data.map((book) => this.getDisplayBook(book));
+            console.log(response.data);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      } else {
+        http
+          .post("/api/content/bymetopdown", form)
+          .then((response) => {
+            this.books = response.data.map((book) => this.getDisplayBook(book));
+            console.log(response.data);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     },
-
 
     searchTitle() {
-      var form=new FormData();
-      form.append('title',this.Search)
-      http.post("/api/content/search",form)
-        .then(response => {
-          this.books = response.data.map(book=>this.getDisplayBook(book));
+      var form = new FormData();
+      form.append("title", this.Search);
+      http
+        .post("/api/content/search", form)
+        .then((response) => {
+          this.books = response.data.map((book) => this.getDisplayBook(book));
           console.log(response.data);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
 
-    editBook(item) {
-      this.bookDialog=true;
-      alert(item.id)
-      this.title=this.selectedBook[0].title;
-      this.price=this.selectedBook[0].price;
-      this.description=this.selectedBook[0].description;
-
+    editBook(id) {
+      this.bookDialog = true;
+      this.id = id;
+      this.title = this.selectedBook[0].title;
+      this.price = this.selectedBook[0].price;
+      this.description = this.selectedBook[0].description;
     },
 
-
-    deleteBook(title) {
-      http.delete(title)
+    deleteBook(book) {
+      http
+        .delete(book)
         .then(() => {
-          this.refreshList();
+          this.retrieveBooks("all");
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
@@ -238,27 +335,24 @@ export default {
         price: book.price,
         author: book.author,
         sold: book.download,
-        description:book.description,
-        rate:book.rate,
-        avgRate:book.avg_rating
+        description: book.description,
+        ID: book.ID,
+        rate: book.rate,
+        avgRate: book.avg_rating,
       };
+    },
+  },
+  created() {
+    var storage = window.localStorage;
+    if (
+      storage.getItem("kitabUserType") != null &&
+      storage.getItem("kitabToken") != null
+    ) {
+      this.isLogged = true;
+      this.typeOfUser = storage.getItem("kitabUserType");
+      this.retrieveBooks("all");
     }
   },
-  mounted() {
-    // this.retrieveBooks();
-   
-  },
-  created(){
-    var storage=window.localStorage;
-    if (storage.getItem("kitabUserType")!=null&&storage.getItem("kitabToken")!=null) {
-      this.isLogged=true;
-      this.typeOfUser=storage.getItem('kitabUserType');
-      this.retrieveBooks();
-    }
-    
-
-  }
- 
 };
 </script>
 
